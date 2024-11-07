@@ -13,6 +13,7 @@ VX_DP  = $(RISCV_TOOLCHAIN_PATH)/bin/riscv32-unknown-elf-objdump
 VX_CP  = $(RISCV_TOOLCHAIN_PATH)/bin/riscv32-unknown-elf-objcopy
 
 VX_CFLAGS  += -march=rv32imf -mabi=ilp32f -O3 -Wstack-usage=1024 -ffreestanding -nostartfiles -fdata-sections -ffunction-sections
+VX_CFLAGS  += -I$(GPGPU_HOME)/hw/src/vendor/vortex/runtime/include
 VX_LDFLAGS += -Wl,-Bstatic,-T,$(GPGPU_HOME)/sw/link/link32.ld -Wl,--gc-sections
 VX_SRCS     = $(GPGPU_HOME)/sw/apps/$(APP_NAME)/src/kernel.c $(GPGPU_HOME)/sw/startup/ctr0.S
 

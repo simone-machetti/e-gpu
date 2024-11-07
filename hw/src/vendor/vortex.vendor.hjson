@@ -19,14 +19,20 @@
     "ci",
     "docs",
     "hw/dpi",
-    "hw/scripts",
+    "hw/scripts/scope.json",
+    "hw/scripts/scope.py",
     "hw/syn",
     "hw/unit_tests",
     "hw/.gitignore",
     "hw/Makefile",
+    "runtime/include/vx_print.h"
+    "runtime/include/vx_spawn.h"
+    "runtime/linker"
+    "runtime/src"
+    "runtime/.gitignore"
+    "runtime/Makefile"
     "driver",
     "miscs",
-    "runtime",
     "sim",
     "tests",
     "LICENSE",

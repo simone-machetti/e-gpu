@@ -4,11 +4,14 @@
 #
 # Author: Simone Machetti - simone.machetti@epfl.ch
 
+VORTEX = $(GPGPU_HOME)/hw/src/vendor/vortex
+
 src-gen-all: clean src-gen-vendor
 
 src-gen-vendor:
 	cd vendor && \
 	python3 vendor.py vortex.vendor.hjson --update && \
+	python3 $(VORTEX)/hw/scripts/gen_config.py -i $(VORTEX)/hw/rtl/VX_config.vh -o $(VORTEX)/runtime/include/VX_config.h && \
 	python3 vendor.py pulp_platform_common_cells.vendor.hjson --update && \
 	python3 vendor.py pulp_platform_cluster_interconnect.vendor.hjson --update
 
