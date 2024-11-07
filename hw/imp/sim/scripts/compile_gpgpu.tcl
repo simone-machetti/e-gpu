@@ -96,16 +96,16 @@ vlog -work work $lib_include $lib_vx_rtl $lib_vx_tex_unit $lib_vx_libs $lib_vx_i
 vlog -work work $lib_include $lib_vx_rtl $lib_vx_tex_unit $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(GPGPU_HOME)/hw/src/vendor/vortex/hw/rtl/libs/VX_bits_insert.sv
 vlog -work work $lib_include $lib_vx_rtl $lib_vx_tex_unit $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(GPGPU_HOME)/hw/src/vendor/vortex/hw/rtl/libs/VX_axi_adapter.sv
 
-# /hw/src/vendor/vortex/hw/rtl/tex_unit
-vlog -work work $lib_include $lib_vx_rtl $lib_vx_tex_unit $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(GPGPU_HOME)/hw/src/vendor/vortex/hw/rtl/tex_unit/VX_tex_wrap.sv
-vlog -work work $lib_include $lib_vx_rtl $lib_vx_tex_unit $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(GPGPU_HOME)/hw/src/vendor/vortex/hw/rtl/tex_unit/VX_tex_unit.sv
-vlog -work work $lib_include $lib_vx_rtl $lib_vx_tex_unit $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(GPGPU_HOME)/hw/src/vendor/vortex/hw/rtl/tex_unit/VX_tex_stride.sv
-vlog -work work $lib_include $lib_vx_rtl $lib_vx_tex_unit $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(GPGPU_HOME)/hw/src/vendor/vortex/hw/rtl/tex_unit/VX_tex_sat.sv
-vlog -work work $lib_include $lib_vx_rtl $lib_vx_tex_unit $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(GPGPU_HOME)/hw/src/vendor/vortex/hw/rtl/tex_unit/VX_tex_sampler.sv
-vlog -work work $lib_include $lib_vx_rtl $lib_vx_tex_unit $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(GPGPU_HOME)/hw/src/vendor/vortex/hw/rtl/tex_unit/VX_tex_mem.sv
-vlog -work work $lib_include $lib_vx_rtl $lib_vx_tex_unit $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(GPGPU_HOME)/hw/src/vendor/vortex/hw/rtl/tex_unit/VX_tex_lerp.sv
-vlog -work work $lib_include $lib_vx_rtl $lib_vx_tex_unit $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(GPGPU_HOME)/hw/src/vendor/vortex/hw/rtl/tex_unit/VX_tex_format.sv
-vlog -work work $lib_include $lib_vx_rtl $lib_vx_tex_unit $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(GPGPU_HOME)/hw/src/vendor/vortex/hw/rtl/tex_unit/VX_tex_addr.sv
+# # /hw/src/vendor/vortex/hw/rtl/tex_unit
+# vlog -work work $lib_include $lib_vx_rtl $lib_vx_tex_unit $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(GPGPU_HOME)/hw/src/vendor/vortex/hw/rtl/tex_unit/VX_tex_wrap.sv
+# vlog -work work $lib_include $lib_vx_rtl $lib_vx_tex_unit $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(GPGPU_HOME)/hw/src/vendor/vortex/hw/rtl/tex_unit/VX_tex_unit.sv
+# vlog -work work $lib_include $lib_vx_rtl $lib_vx_tex_unit $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(GPGPU_HOME)/hw/src/vendor/vortex/hw/rtl/tex_unit/VX_tex_stride.sv
+# vlog -work work $lib_include $lib_vx_rtl $lib_vx_tex_unit $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(GPGPU_HOME)/hw/src/vendor/vortex/hw/rtl/tex_unit/VX_tex_sat.sv
+# vlog -work work $lib_include $lib_vx_rtl $lib_vx_tex_unit $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(GPGPU_HOME)/hw/src/vendor/vortex/hw/rtl/tex_unit/VX_tex_sampler.sv
+# vlog -work work $lib_include $lib_vx_rtl $lib_vx_tex_unit $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(GPGPU_HOME)/hw/src/vendor/vortex/hw/rtl/tex_unit/VX_tex_mem.sv
+# vlog -work work $lib_include $lib_vx_rtl $lib_vx_tex_unit $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(GPGPU_HOME)/hw/src/vendor/vortex/hw/rtl/tex_unit/VX_tex_lerp.sv
+# vlog -work work $lib_include $lib_vx_rtl $lib_vx_tex_unit $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(GPGPU_HOME)/hw/src/vendor/vortex/hw/rtl/tex_unit/VX_tex_format.sv
+# vlog -work work $lib_include $lib_vx_rtl $lib_vx_tex_unit $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(GPGPU_HOME)/hw/src/vendor/vortex/hw/rtl/tex_unit/VX_tex_addr.sv
 
 # /hw/src/vendor/vortex/hw/rtl
 vlog -work work $lib_include $lib_vx_rtl $lib_vx_tex_unit $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(GPGPU_HOME)/hw/src/vendor/vortex/hw/rtl/VX_writeback.sv
