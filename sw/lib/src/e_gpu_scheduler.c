@@ -6,7 +6,7 @@
 
 #include <stdio.h>
 #include <vx_intrinsics.h>
-#include "gpu_scheduler.h"
+#include "e_gpu_scheduler.h"
 
 typedef struct {
   volatile unsigned int done;

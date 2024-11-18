@@ -7,13 +7,13 @@
 #!/bin/bash
 
 # RISC-V toolchain
-export RISCV_TOOLCHAIN_PATH=/gpgpu_tools/riscv-gnu-toolchain
+export RISCV_TOOLCHAIN_PATH=/e_gpu_tools/riscv-gnu-toolchain
 
 # Repository home
-export GPGPU_HOME=$(pwd)
+export E_GPU_HOME=$(pwd)
 
 # Questa path
-export PATH="/gpgpu_tools/qsta/2020.4/linux_x86_64:$PATH"
+export PATH="/e_gpu_tools/qsta/2020.4/linux_x86_64:$PATH"
 
 # Questa license
 export MGLS_LICENSE_FILE=1717@edalicsrv.epfl.ch

@@ -5,7 +5,7 @@
 // Author: Simone Machetti - simone.machetti@epfl.ch
 
 #include <stdio.h>
-#include "gpu_scheduler.h"
+#include "e_gpu_scheduler.h"
 
 #define LENGTH 16
 

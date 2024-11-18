@@ -4,7 +4,7 @@
 #
 # Author: Simone Machetti - simone.machetti@epfl.ch
 
-VORTEX = $(GPGPU_HOME)/hw/src/vendor/vortex
+VORTEX = $(E_GPU_HOME)/hw/src/vendor/vortex
 
 src-gen-all: clean src-gen-vendor
 

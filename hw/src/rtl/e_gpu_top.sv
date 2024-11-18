@@ -6,7 +6,7 @@
 
 `include "VX_define.vh"
 
-module gpgpu_top #(
+module e_gpu_top #(
 `ifndef CACHE
 
     parameter INSTR_MEM_SIZE_BYTE = 32768,

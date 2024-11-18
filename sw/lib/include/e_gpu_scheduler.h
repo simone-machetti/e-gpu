@@ -4,8 +4,8 @@
 //
 // Author: Simone Machetti - simone.machetti@epfl.ch
 
-#ifndef _GPU_SCHEDULER_H_
-#define _GPU_SCHEDULER_H_
+#ifndef _E_GPU_SCHEDULER_H_
+#define _E_GPU_SCHEDULER_H_
 
 #define MAX_NUM_ARGS_KERNEL 64
 

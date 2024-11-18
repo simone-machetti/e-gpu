@@ -7,7 +7,7 @@
 `define RAM_SIZE_BYTE 163840 // I: 32KB + D: 4 x 32KB = 160KB
 `define RAM_DONE_WORD 40704
 
-`define IN_FILE  "$GPGPU_HOME/hw/imp/sim/input/kernel.mem"
+`define IN_FILE  "$E_GPU_HOME/hw/imp/sim/input/kernel.mem"
 
 module testbench;
 
@@ -25,7 +25,7 @@ module testbench;
 
     real clk_period = 100;
 
-    gpgpu_top gpgpu_top_i (
+    e_gpu_top e_gpu_top_i (
         .clk_i         (clk),
         .rst_ni        (rst_n),
         .conf_regs_req (conf_regs_req),
