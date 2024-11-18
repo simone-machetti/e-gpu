@@ -15,8 +15,7 @@ MEMORY
   ARGS_RAM  (RWX) : ORIGIN = 0x00027C00 , LENGTH = 0x00400
 }
 
-__stack = ORIGIN(DATA_RAM) + LENGTH(DATA_RAM);
-__stack_size = 32K;
+__stack_size = 0x8000;
 
 SECTIONS
 {
@@ -58,7 +57,9 @@ SECTIONS
   .stack :
   {
     . = ALIGN(4);
+    __stack_start = .;
     . = . + __stack_size;
+    __stack = .;
     . = ALIGN(4);
   } > DATA_RAM
 
