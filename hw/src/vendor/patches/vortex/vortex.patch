@@ -1,0 +1,38 @@
+diff --git a/hw/rtl/VX_config.vh b/hw/rtl/VX_config.vh
+index 14572fe9..10d38cd5 100644
+--- a/hw/rtl/VX_config.vh
++++ b/hw/rtl/VX_config.vh
+@@ -1,7 +1,6 @@
+ `ifndef VX_CONFIG
+ `define VX_CONFIG
+ 
+-`define EXT_M_DISABLE
+ `define EXT_F_DISABLE
+ 
+ `ifndef XLEN
+diff --git a/hw/rtl/VX_decode.sv b/hw/rtl/VX_decode.sv
+index 96f400f8..54c44017 100644
+--- a/hw/rtl/VX_decode.sv
++++ b/hw/rtl/VX_decode.sv
+@@ -102,7 +102,7 @@ module VX_decode  #(
+             end
+             `INST_R: begin
+                 ex_type = `EX_ALU;
+-            `ifdef EXT_F_ENABLE
++            `ifdef EXT_M_ENABLE
+                 if (func7[0]) begin
+                     case (func3)
+                         3'h0: op_type = `INST_OP_BITS'(`INST_MUL_MUL);
+diff --git a/hw/rtl/VX_muldiv.sv b/hw/rtl/VX_muldiv.sv
+index 9721057b..e7f9c941 100644
+--- a/hw/rtl/VX_muldiv.sv
++++ b/hw/rtl/VX_muldiv.sv
+@@ -175,7 +175,7 @@ module VX_muldiv (
+         .WIDTHQ (32),
+         .WIDTHR (32),
+         .LANES  (`NUM_THREADS),
+-        .TAGW   (64 + `NW_BITS + `NUM_THREADS + 32 + `NR_BITS + 1 + 1)
++        .TAGW   (44 + `NW_BITS + `NUM_THREADS + 32 + `NR_BITS + 1 + 1)
+     ) divide (
+         .clk       (clk),
+         .reset     (reset),

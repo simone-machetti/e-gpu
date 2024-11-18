@@ -15,6 +15,8 @@
     rev: "1c9734188de8f24cb4560eea00ba8f1254e1f450",
   },
 
+  patch_dir: "patches/vortex",
+
   exclude_from_upstream: [
     "ci",
     "docs",
