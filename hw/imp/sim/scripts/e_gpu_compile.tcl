@@ -169,15 +169,15 @@ if {$env(SEL_MEM_HIER) == "CACHE"} {
     # /hw/src/rtl/mem_hier_scratchpad/include
     vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/mem_hier_scratchpad/include/mem_map_pkg.sv
 
-    # /hw/src/vendor/pulp_platform_common_cells/src
-    vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/vendor/pulp_platform_common_cells/src/rr_arb_tree.sv
-    vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/vendor/pulp_platform_common_cells/src/cf_math_pkg.sv
-    vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/vendor/pulp_platform_common_cells/src/lzc.sv
-    vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/vendor/pulp_platform_common_cells/src/addr_decode.sv
+    # /hw/src/vendor/common_cells/src
+    vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/vendor/common_cells/src/rr_arb_tree.sv
+    vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/vendor/common_cells/src/cf_math_pkg.sv
+    vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/vendor/common_cells/src/lzc.sv
+    vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/vendor/common_cells/src/addr_decode.sv
 
-    # /hw/src/vendor/pulp_platform_cluster_interconnect/rtl/tcdm_variable_latency_interconnect
-    vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/vendor/pulp_platform_cluster_interconnect/rtl/tcdm_variable_latency_interconnect/addr_dec_resp_mux_varlat.sv
-    vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/vendor/pulp_platform_cluster_interconnect/rtl/tcdm_variable_latency_interconnect/xbar_varlat.sv
+    # /hw/src/vendor/crossbar/rtl/tcdm_variable_latency_interconnect
+    vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/vendor/crossbar/rtl/tcdm_variable_latency_interconnect/addr_dec_resp_mux_varlat.sv
+    vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/vendor/crossbar/rtl/tcdm_variable_latency_interconnect/xbar_varlat.sv
 
     # /hw/src/rtl/mem_hier_scratchpad
     vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/mem_hier_scratchpad/vx_icache_to_obi_bridge.sv

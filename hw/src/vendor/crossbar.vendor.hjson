@@ -7,8 +7,8 @@
 */
 
 {
-  name: "pulp_platform_cluster_interconnect",
-  target_dir: "pulp_platform_cluster_interconnect",
+  name: "crossbar",
+  target_dir: "crossbar",
 
   upstream: {
     url: "https://github.com/davideschiavone/cluster_interconnect",

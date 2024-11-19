@@ -6,10 +6,10 @@
 
 hw/src/vendor/vortex.lock.hjson
 hw/src/vendor/vortex/
-hw/src/vendor/pulp_platform_common_cells.lock.hjson
-hw/src/vendor/pulp_platform_common_cells/
-hw/src/vendor/pulp_platform_cluster_interconnect.lock.hjson
-hw/src/vendor/pulp_platform_cluster_interconnect/
+hw/src/vendor/common_cells.lock.hjson
+hw/src/vendor/common_cells/
+hw/src/vendor/crossbar.lock.hjson
+hw/src/vendor/crossbar/
 hw/imp/sim/input/
 hw/imp/sim/output/
 sw/apps/*/build/

@@ -12,13 +12,13 @@ src-gen-vendor:
 	cd vendor && \
 	python3 vendor.py vortex.vendor.hjson --update && \
 	python3 $(VORTEX)/hw/scripts/gen_config.py -i $(VORTEX)/hw/rtl/VX_config.vh -o $(VORTEX)/runtime/include/VX_config.h && \
-	python3 vendor.py pulp_platform_common_cells.vendor.hjson --update && \
-	python3 vendor.py pulp_platform_cluster_interconnect.vendor.hjson --update
+	python3 vendor.py common_cells.vendor.hjson --update && \
+	python3 vendor.py crossbar.vendor.hjson --update
 
 clean:
 	rm -rf vendor/vortex
 	rm -rf vendor/vortex.lock.hjson
-	rm -rf vendor/pulp_platform_common_cells
-	rm -rf vendor/pulp_platform_common_cells.lock.hjson
-	rm -rf vendor/pulp_platform_cluster_interconnect
-	rm -rf vendor/pulp_platform_cluster_interconnect.lock.hjson
+	rm -rf vendor/common_cells
+	rm -rf vendor/common_cells.lock.hjson
+	rm -rf vendor/crossbar
+	rm -rf vendor/crossbar.lock.hjson
