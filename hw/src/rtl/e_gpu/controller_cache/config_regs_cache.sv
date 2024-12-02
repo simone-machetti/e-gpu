@@ -4,9 +4,9 @@
 //
 // Author: Simone Machetti - simone.machetti@epfl.ch
 
-`include "VX_define.vh"
+`include "e_gpu.vh"
 
-module controller_cache
+module config_regs_cache
 (
     input logic clk_i,
     input logic rst_ni,

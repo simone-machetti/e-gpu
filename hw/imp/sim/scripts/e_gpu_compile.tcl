@@ -6,7 +6,7 @@
 
 vlib work
 
-set lib_include       +incdir+$env(E_GPU_HOME)/hw/src/rtl/include
+set lib_include       +incdir+$env(E_GPU_HOME)/hw/src/rtl
 set lib_vx_rtl        +incdir+$env(E_GPU_HOME)/hw/src/vendor/vortex/hw/rtl
 set lib_vx_libs       +incdir+$env(E_GPU_HOME)/hw/src/vendor/vortex/hw/rtl/libs
 set lib_vx_interfaces +incdir+$env(E_GPU_HOME)/hw/src/vendor/vortex/hw/rtl/interfaces
@@ -124,29 +124,41 @@ vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx
 vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/vendor/vortex/hw/rtl/VX_pipeline.sv
 
 # /hw/src/rtl/common
-vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/common/clk_gate_cell_behavioral.sv
-vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/common/clk_gate_cell_wrapper.sv
+vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/common/clock_gating_cell_behavioral.sv
+vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/common/clock_gating_cell_wrapper.sv
 
 if {$env(SEL_MEM_HIER) == "CACHE"} {
 
     # /hw/src/rtl/interfaces
     vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/interfaces/obi_req_if.sv
     vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/interfaces/obi_rsp_if.sv
+    vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/interfaces/vx_cache_req_if.sv
+    vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/interfaces/vx_cache_rsp_if.sv
 
     # /hw/src/rtl/common
     vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/common/single_port_sram_behavioral.sv
     vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/common/single_port_sram_wrapper.sv
 
-    # /hw/src/rtl/controller_cache
-    vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/controller_cache/controller_cache.sv
-    vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/controller_cache/controller_cache_top.sv
+    # /hw/src/rtl/e_gpu/compute_unit
+    vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/e_gpu/compute_unit/pipeline.sv
+    vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/e_gpu/compute_unit/l1_instr_cache.sv
+    vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/e_gpu/compute_unit/l1_data_cache.sv
 
-    # /hw/src/rtl/mem_hier_cache
-    vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/mem_hier_cache/vx_mem_to_obi_bridge.sv
-    vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/mem_hier_cache/serializer.sv
-    vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/mem_hier_cache/instr_cache.sv
-    vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/mem_hier_cache/data_cache.sv
-    vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/mem_hier_cache/mem_hier_cache_top.sv
+    # /hw/src/rtl/e_gpu/controller_cache
+    vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/e_gpu/controller_cache/config_regs_cache.sv
+
+    # /hw/src/rtl/e_gpu/l2_shared_cache/bus_adapter
+    vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/e_gpu/l2_shared_cache/bus_adapter/serializer.sv
+    vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/e_gpu/l2_shared_cache/bus_adapter/vx_mem_to_obi_bridge.sv
+
+    # /hw/src/rtl/e_gpu/l2_shared_cache
+    vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/e_gpu/l2_shared_cache/bus_adapter.sv
+    vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/e_gpu/l2_shared_cache/l2_cache.sv
+
+    # /hw/src/rtl/e_gpu
+    vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/e_gpu/compute_unit.sv
+    vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/e_gpu/controller_cache.sv
+    vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/e_gpu/l2_shared_cache.sv
 
 } else {
 
@@ -190,5 +202,4 @@ if {$env(SEL_MEM_HIER) == "CACHE"} {
 }
 
 # /hw/src/rtl/
-vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/core.sv
-vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/e_gpu_top.sv -define $env(SEL_MEM_HIER)
+vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/e_gpu.sv -define $env(SEL_MEM_HIER)

@@ -26,6 +26,7 @@ kernel.elf: $(VX_SRCS)
 kernel.bin: kernel.elf
 	$(VX_CP) -O binary $(E_GPU_HOME)/sw/apps/$(APP_NAME)/build/kernel.elf $(E_GPU_HOME)/sw/apps/$(APP_NAME)/build/kernel.bin
 	mkdir -p $(E_GPU_HOME)/hw/imp/sim/input
+	cp $(E_GPU_HOME)/sw/apps/$(APP_NAME)/src/host.vh $(E_GPU_HOME)/hw/imp/sim/input
 	python3 $(E_GPU_HOME)/sw/tools/bin2mem.py $(E_GPU_HOME)/sw/apps/$(APP_NAME)/build/kernel.bin $(E_GPU_HOME)/hw/imp/sim/input/kernel.mem
 
 kernel.dump: kernel.elf

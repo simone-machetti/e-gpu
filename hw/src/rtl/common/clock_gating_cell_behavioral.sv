@@ -4,20 +4,24 @@
 //
 // Author: Simone Machetti - simone.machetti@epfl.ch
 
-`include "VX_define.vh"
+`include "e_gpu.vh"
 
-module clk_gate_cell_wrapper
+module clock_gating_cell_behavioral
 (
     input  logic clk_i,
     input  logic en_i,
+    input  logic scan_cg_en_i,
     output logic clk_o
 );
 
-    clk_gate_cell_behavioral clk_gate_cell_behavioral_i (
-        .clk_i        (clk_i),
-        .en_i         (en_i),
-        .scan_cg_en_i (1'b0),
-        .clk_o        (clk_o)
-    );
+    logic clk_en;
+
+    always_latch begin
+        if (clk_i == 1'b0) begin
+            clk_en <= en_i | scan_cg_en_i;
+        end
+    end
+
+    assign clk_o = clk_i & clk_en;
 
 endmodule

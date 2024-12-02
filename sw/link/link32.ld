@@ -10,64 +10,70 @@ ENTRY(_start)
 
 MEMORY
 {
-  INSTR_RAM (RWX) : ORIGIN = 0x00000000 , LENGTH = 0x08000
-  DATA_RAM  (RWX) : ORIGIN = 0X00008000 , LENGTH = 0X1FC00
-  ARGS_RAM  (RWX) : ORIGIN = 0x00027C00 , LENGTH = 0x00400
+  KERNEL_CODE  (RWX) : ORIGIN = 0x00000000 , LENGTH = 0x08000
+  KERNEL_STACK (RWX) : ORIGIN = 0x00008000 , LENGTH = 0x08000
+  KERNEL_ARGS  (RWX) : ORIGIN = 0X00010000 , LENGTH = 0x08000
+  KERNEL_DATA  (RWX) : ORIGIN = 0x00018000 , LENGTH = 0x08000
 }
 
 __stack_size = 0x8000;
 
 SECTIONS
 {
-  .start MAX(0x00000000, ALIGN(4)) :
+  .start MAX(0x00000000, ALIGN(64)) :
   {
-    . = ALIGN(4);
+    . = ALIGN(64);
     *(.start*)
-    . = ALIGN(4);
-  } > INSTR_RAM
+    . = ALIGN(64);
+  } > KERNEL_CODE
 
   .text :
   {
-    . = ALIGN(4);
+    . = ALIGN(64);
     *(.text*)
-    . = ALIGN(4);
-  } > INSTR_RAM
+    . = ALIGN(64);
+  } > KERNEL_CODE
 
   .data :
   {
-    . = ALIGN(4);
+    . = ALIGN(64);
     *(.data*)
-    . = ALIGN(4);
-  } > DATA_RAM
+    . = ALIGN(64);
+  } > KERNEL_CODE
 
   .rodata :
   {
-    . = ALIGN(4);
+    . = ALIGN(64);
     *(.rodata*)
-    . = ALIGN(4);
-  } > DATA_RAM
+    . = ALIGN(64);
+  } > KERNEL_CODE
 
   .bss :
   {
-    . = ALIGN(4);
+    . = ALIGN(64);
     *(.bss*)
-    . = ALIGN(4);
-  } > DATA_RAM
+    . = ALIGN(64);
+  } > KERNEL_CODE
 
   .stack :
   {
-    . = ALIGN(4);
-    __stack_start = .;
+    . = ALIGN(64);
     . = . + __stack_size;
     __stack = .;
-    . = ALIGN(4);
-  } > DATA_RAM
+    . = ALIGN(64);
+  } > KERNEL_STACK
 
-  .args : {
-    . = ALIGN(4);
-    *(.args)
-    . = ALIGN(4);
-  } > ARGS_RAM
+  .kernel_args : {
+    . = ALIGN(64);
+    *(.kernel_args)
+    . = ALIGN(64);
+  } > KERNEL_ARGS
+
+  .kernel_data : {
+    . = ALIGN(64);
+    *(.kernel_data)
+    . = ALIGN(64);
+  } > KERNEL_DATA
 
   /DISCARD/ : {
     *(*)

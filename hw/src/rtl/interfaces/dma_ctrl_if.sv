@@ -7,7 +7,7 @@
 `ifndef DMA_IF
 `define DMA_IF
 
-`include "VX_define.vh"
+`include "e_gpu.vh"
 
 interface dma_ctrl_if ();
 

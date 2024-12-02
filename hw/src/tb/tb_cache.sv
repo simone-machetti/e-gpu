@@ -4,47 +4,46 @@
 //
 // Author: Simone Machetti - simone.machetti@epfl.ch
 
-`define RAM_SIZE_BYTE 163840 // I: 32KB + D: 4 x 32KB = 160KB
-`define RAM_DONE_WORD 40704
-
 `define IN_FILE  "$E_GPU_HOME/hw/imp/sim/input/kernel.mem"
+`define OUT_FILE "$E_GPU_HOME/hw/imp/sim/output/output.mem"
+
+`define HOST_MEM_SIZE        32'h00020000
+`define HOST_MEM_KERNEL_ARGS 32'h00010000
+`define HOST_MEM_KERNEL_DATA 32'h00018000
+
+`define HOST_MEM_SIZE_WORD        (`HOST_MEM_SIZE / 4)
+`define HOST_MEM_KERNEL_ARGS_WORD (`HOST_MEM_KERNEL_ARGS / 4)
+`define HOST_MEM_KERNEL_DATA_WORD (`HOST_MEM_KERNEL_DATA / 4)
 
 module testbench;
 
     logic clk;
     logic rst_n;
 
-    obi_req_if instr_mem_req();
-    obi_rsp_if instr_mem_rsp();
-
-    obi_req_if data_mem_req();
-    obi_rsp_if data_mem_rsp();
+    obi_req_if host_mem_req();
+    obi_rsp_if host_mem_rsp();
 
     obi_req_if conf_regs_req();
     obi_rsp_if conf_regs_rsp();
 
     real clk_period = 100;
 
-    e_gpu_top e_gpu_top_i (
+    e_gpu e_gpu_i (
         .clk_i         (clk),
         .rst_ni        (rst_n),
         .conf_regs_req (conf_regs_req),
         .conf_regs_rsp (conf_regs_rsp),
-        .instr_mem_req (instr_mem_req),
-        .instr_mem_rsp (instr_mem_rsp),
-        .data_mem_req  (data_mem_req),
-        .data_mem_rsp  (data_mem_rsp)
+        .host_mem_req  (host_mem_req),
+        .host_mem_rsp  (host_mem_rsp)
     );
 
-    dual_port_ram # (
-        .MEM_SIZE_WORD (`RAM_SIZE_BYTE/4)
-    ) dual_port_ram_i (
+    host_mem #(
+        .MEM_SIZE_WORD (`HOST_MEM_SIZE_WORD)
+    ) host_mem_i (
         .clk_i         (clk),
         .rst_ni        (rst_n),
-        .instr_mem_req (instr_mem_req),
-        .instr_mem_rsp (instr_mem_rsp),
-        .data_mem_req  (data_mem_req),
-        .data_mem_rsp  (data_mem_rsp)
+        .host_mem_req  (host_mem_req),
+        .host_mem_rsp  (host_mem_rsp)
     );
 
     task init_vcd;
@@ -67,11 +66,47 @@ module testbench;
 
     task init_mem;
     begin
-        int i;
-        for (i=0; i<`RAM_SIZE_BYTE/4; i++) begin
-            testbench.dual_port_ram_i.mem_array[i] = 0;
+        int unsigned i;
+        for (i=0; i<`HOST_MEM_SIZE_WORD; i++) begin
+            testbench.host_mem_i.mem_array[i] = 0;
         end
-        $readmemh(`IN_FILE, testbench.dual_port_ram_i.mem_array);
+
+        $readmemh(`IN_FILE, testbench.host_mem_i.mem_array);
+    end
+    endtask
+
+    task dump_mem;
+    begin
+        int unsigned fd;
+        int unsigned i;
+        fd = $fopen(`OUT_FILE, "w");
+        for (i = 0; i < `HOST_MEM_SIZE_WORD; i++) begin
+            $fdisplay(fd, "%X", testbench.host_mem_i.mem_array[i]);
+        end
+    end
+    endtask
+
+    task write_kernel_args (input logic [31:0] addr_offset, input logic [31:0] data);
+    begin
+        testbench.host_mem_i.mem_array[`HOST_MEM_KERNEL_ARGS_WORD + (addr_offset / 4)] = data;
+    end
+    endtask
+
+    task read_kernel_args (input logic [31:0] addr_offset, output logic [31:0] data);
+    begin
+        data = testbench.host_mem_i.mem_array[`HOST_MEM_KERNEL_ARGS_WORD + (addr_offset / 4)];
+    end
+    endtask
+
+    task write_kernel_data (input logic [31:0] addr_offset, input logic [31:0] data);
+    begin
+        testbench.host_mem_i.mem_array[`HOST_MEM_KERNEL_DATA_WORD + (addr_offset / 4)] = data;
+    end
+    endtask
+
+    task read_kernel_data (input logic [31:0] addr_offset, output logic [31:0] data);
+    begin
+        data = testbench.host_mem_i.mem_array[`HOST_MEM_KERNEL_DATA_WORD + (addr_offset / 4)];
     end
     endtask
 
@@ -94,10 +129,13 @@ module testbench;
     end
     endtask
 
+    `include "host.vh"
+
     initial begin
         rst_n = 1'b0;
         init_vcd;
         init_mem;
+        write_data;
         start_vcd;
         #(clk_period*50);
         rst_n = 1'b1;
@@ -112,8 +150,10 @@ module testbench;
         clk = 1'b1;
         #(clk_period/2);
 
-        if(testbench.dual_port_ram_i.mem_array[`RAM_DONE_WORD][31:0] == 1) begin
+        if((testbench.host_mem_i.mem_array[`HOST_MEM_KERNEL_ARGS_WORD] == 1) && (testbench.host_mem_i.mem_array[`HOST_MEM_KERNEL_ARGS_WORD + 1] == 1)) begin
             stop_vcd;
+            dump_mem;
+            check_results;
             $stop;
         end
     end

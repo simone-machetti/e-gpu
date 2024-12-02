@@ -7,12 +7,12 @@
 #ifndef _E_GPU_SCHEDULER_H_
 #define _E_GPU_SCHEDULER_H_
 
+#define NUM_COMPUTE_UNITS   2
 #define MAX_NUM_ARGS_KERNEL 64
 
 typedef struct {
-  volatile unsigned int done;
+  volatile unsigned int done[NUM_COMPUTE_UNITS];
   volatile unsigned int num_tasks;
-  volatile void (*ptr)(unsigned int);
   volatile unsigned int *args[MAX_NUM_ARGS_KERNEL];
 } kernel_args_t;
 

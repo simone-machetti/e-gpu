@@ -7,7 +7,7 @@
 `ifndef OBI_RSP_IF
 `define OBI_RSP_IF
 
-`include "VX_define.vh"
+`include "e_gpu.vh"
 
 interface obi_rsp_if ();
 

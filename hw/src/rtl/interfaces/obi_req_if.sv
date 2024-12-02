@@ -7,7 +7,7 @@
 `ifndef OBI_REQ_IF
 `define OBI_REQ_IF
 
-`include "VX_define.vh"
+`include "e_gpu.vh"
 
 interface obi_req_if ();
 

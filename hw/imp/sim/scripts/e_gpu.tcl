@@ -8,8 +8,8 @@ source $env(E_GPU_HOME)/hw/imp/sim/scripts/e_gpu_compile.tcl
 
 if {$env(SEL_MEM_HIER) == "CACHE"} {
 
-    vlog -work work $env(E_GPU_HOME)/hw/src/tb/dual_port_ram.sv
-    vlog -work work $env(E_GPU_HOME)/hw/src/tb/tb_cache.sv
+    vlog -work work $env(E_GPU_HOME)/hw/src/tb/host_mem.sv
+    vlog -work work +incdir+$env(E_GPU_HOME)/hw/imp/sim/input $env(E_GPU_HOME)/hw/src/tb/tb_cache.sv
 
 } else {
 

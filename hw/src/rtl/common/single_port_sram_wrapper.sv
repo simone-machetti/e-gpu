@@ -4,7 +4,7 @@
 //
 // Author: Simone Machetti - simone.machetti@epfl.ch
 
-`include "VX_define.vh"
+`include "e_gpu.vh"
 
 module single_port_sram_wrapper #(
     parameter MEM_SIZE_BYTE = 32768

@@ -1,15 +1,63 @@
 diff --git a/hw/rtl/VX_config.vh b/hw/rtl/VX_config.vh
-index 14572fe9..10d38cd5 100644
+index 14572fe9..47cc77df 100644
 --- a/hw/rtl/VX_config.vh
 +++ b/hw/rtl/VX_config.vh
-@@ -1,7 +1,6 @@
+@@ -1,7 +1,8 @@
  `ifndef VX_CONFIG
  `define VX_CONFIG
  
 -`define EXT_M_DISABLE
++`include "e_gpu.vh"
++
  `define EXT_F_DISABLE
  
  `ifndef XLEN
+@@ -9,19 +10,19 @@
+ `endif
+ 
+ `ifndef NUM_CLUSTERS
+-`define NUM_CLUSTERS 1
++`define NUM_CLUSTERS 0
+ `endif
+ 
+ `ifndef NUM_CORES
+-`define NUM_CORES 1
++`define NUM_CORES 0
+ `endif
+ 
+ `ifndef NUM_WARPS
+-`define NUM_WARPS 2
++`define NUM_WARPS 0
+ `endif
+ 
+ `ifndef NUM_THREADS
+-`define NUM_THREADS 4
++`define NUM_THREADS 0
+ `endif
+ 
+ `ifndef NUM_BARRIERS
+@@ -409,7 +410,7 @@
+ 
+ // Number of banks
+ `ifndef L2_NUM_BANKS
+-`define L2_NUM_BANKS ((`NUM_CORES < 4) ? `NUM_CORES : 4)
++`define L2_NUM_BANKS (2 * `NUM_COMPUTE_UNITS)
+ `endif
+ 
+ // Number of ports per bank
+diff --git a/hw/rtl/VX_csr_data.sv b/hw/rtl/VX_csr_data.sv
+index c6a8b7df..be46b6bd 100644
+--- a/hw/rtl/VX_csr_data.sv
++++ b/hw/rtl/VX_csr_data.sv
+@@ -140,7 +140,7 @@ module VX_csr_data #(
+ 
+             `CSR_NT         : read_data_r = `NUM_THREADS;
+             `CSR_NW         : read_data_r = `NUM_WARPS;
+-            `CSR_NC         : read_data_r = `NUM_CORES * `NUM_CLUSTERS;
++            `CSR_NC         : read_data_r = `NUM_COMPUTE_UNITS;
+ 
+             `CSR_MCYCLE     : read_data_r = csr_cycle[31:0];
+             `CSR_MCYCLE_H   : read_data_r = 32'(csr_cycle[`PERF_CTR_BITS-1:32]);
 diff --git a/hw/rtl/VX_decode.sv b/hw/rtl/VX_decode.sv
 index 96f400f8..54c44017 100644
 --- a/hw/rtl/VX_decode.sv
@@ -23,6 +71,19 @@ index 96f400f8..54c44017 100644
                  if (func7[0]) begin
                      case (func3)
                          3'h0: op_type = `INST_OP_BITS'(`INST_MUL_MUL);
+diff --git a/hw/rtl/VX_define.vh b/hw/rtl/VX_define.vh
+index 35b308cc..f30da4a2 100644
+--- a/hw/rtl/VX_define.vh
++++ b/hw/rtl/VX_define.vh
+@@ -357,7 +357,7 @@
+ `define L2_MEM_BYTEEN_WIDTH      `L2_CACHE_LINE_SIZE
+ 
+ // Input request size
+-`define L2_NUM_REQS              `NUM_CORES
++`define L2_NUM_REQS              (2 * `NUM_COMPUTE_UNITS)
+ 
+ // Memory request tag bits
+ `define _L2_MEM_ADDR_RATIO_W     $clog2(`L2_CACHE_LINE_SIZE / `L2_WORD_SIZE)
 diff --git a/hw/rtl/VX_muldiv.sv b/hw/rtl/VX_muldiv.sv
 index 9721057b..e7f9c941 100644
 --- a/hw/rtl/VX_muldiv.sv

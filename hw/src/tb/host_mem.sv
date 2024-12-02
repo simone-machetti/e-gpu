@@ -4,19 +4,15 @@
 //
 // Author: Simone Machetti - simone.machetti@epfl.ch
 
-`include "e_gpu.vh"
-
-module single_port_sram_behavioral #(
-    parameter MEM_SIZE_BYTE = 32768
+module host_mem #(
+    parameter MEM_SIZE_WORD = 32768
 )(
     input logic clk_i,
     input logic rst_ni,
 
-    obi_req_if.slave  req,
-    obi_rsp_if.master rsp
+    obi_req_if.slave  host_mem_req,
+    obi_rsp_if.master host_mem_rsp
 );
-
-    localparam MEM_SIZE_WORD = MEM_SIZE_BYTE*4;
 
     logic [31:0] mem_array [0:MEM_SIZE_WORD-1];
 
@@ -25,9 +21,9 @@ module single_port_sram_behavioral #(
     state_t curr_state;
     state_t next_state;
 
-    logic [3:0]                       be;
-    logic [$clog2(MEM_SIZE_BYTE)-3:0] addr;
-    logic [31:0]                      wdata;
+    logic [3:0]  be;
+    logic [29:0] addr;
+    logic [31:0] wdata;
 
     always_ff @(posedge(clk_i) or negedge(rst_ni)) begin
         if (!rst_ni) begin
@@ -36,9 +32,9 @@ module single_port_sram_behavioral #(
             wdata <= '0;
         end
         else begin
-            be    <= req.be;
-            addr  <= req.addr[$clog2(MEM_SIZE_BYTE)-1:2];
-            wdata <= req.wdata;
+            be    <= host_mem_req.be;
+            addr  <= host_mem_req.addr[31:2];
+            wdata <= host_mem_req.wdata;
         end
     end
 
@@ -52,20 +48,20 @@ module single_port_sram_behavioral #(
     end
 
     always_comb begin
-        next_state = curr_state;
-        req.gnt    = 1'b0;
-        rsp.rvalid = 1'b0;
-        rsp.rdata  = 32'd0;
+        next_state          = curr_state;
+        host_mem_req.gnt    = 1'b0;
+        host_mem_rsp.rvalid = 1'b0;
+        host_mem_rsp.rdata  = 32'd0;
         case(curr_state)
             IDLE: begin
-                if (req.req) begin
-                    if (req.we) begin
-                        req.gnt    = 1'b1;
-                        next_state = WRITE;
+                if (host_mem_req.req) begin
+                    if (host_mem_req.we) begin
+                        host_mem_req.gnt = 1'b1;
+                        next_state       = WRITE;
                     end
                     else begin
-                        req.gnt    = 1'b1;
-                        next_state = READ;
+                        host_mem_req.gnt = 1'b1;
+                        next_state       = READ;
                     end
                 end
                 else begin
@@ -73,12 +69,12 @@ module single_port_sram_behavioral #(
                 end
             end
             READ: begin
-                rsp.rvalid = 1'b1;
-                rsp.rdata  = mem_array[addr];
-                next_state = IDLE;
+                host_mem_rsp.rvalid = 1'b1;
+                host_mem_rsp.rdata  = mem_array[addr];
+                next_state          = IDLE;
             end
             WRITE: begin
-                rsp.rvalid                 = 1'b1;
+                host_mem_rsp.rvalid        = 1'b1;
                 if (be[0])
                     mem_array[addr][7:0]   = wdata[7:0];
                 if (be[1])

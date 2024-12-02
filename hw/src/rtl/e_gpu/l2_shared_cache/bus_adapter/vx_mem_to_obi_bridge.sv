@@ -4,7 +4,7 @@
 //
 // Author: Simone Machetti - simone.machetti@epfl.ch
 
-`include "VX_define.vh"
+`include "e_gpu.vh"
 
 module vx_mem_to_obi_bridge #(
     parameter TAG_WIDTH_BIT = 1

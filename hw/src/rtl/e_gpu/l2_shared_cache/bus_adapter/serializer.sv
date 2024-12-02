@@ -4,7 +4,7 @@
 //
 // Author: Simone Machetti - simone.machetti@epfl.ch
 
-`include "VX_define.vh"
+`include "e_gpu.vh"
 
 module serializer #(
     parameter ADDR_WIDTH_BIT = 32,
