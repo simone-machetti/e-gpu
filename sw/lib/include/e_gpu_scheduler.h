@@ -11,7 +11,6 @@
 #define MAX_NUM_ARGS_KERNEL 64
 
 typedef struct {
-  volatile unsigned int done[NUM_COMPUTE_UNITS];
   volatile unsigned int num_tasks;
   volatile unsigned int *args[MAX_NUM_ARGS_KERNEL];
 } kernel_args_t;

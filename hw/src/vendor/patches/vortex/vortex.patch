@@ -59,10 +59,29 @@ index c6a8b7df..be46b6bd 100644
              `CSR_MCYCLE     : read_data_r = csr_cycle[31:0];
              `CSR_MCYCLE_H   : read_data_r = 32'(csr_cycle[`PERF_CTR_BITS-1:32]);
 diff --git a/hw/rtl/VX_decode.sv b/hw/rtl/VX_decode.sv
-index 96f400f8..54c44017 100644
+index 96f400f8..f7b225d5 100644
 --- a/hw/rtl/VX_decode.sv
 +++ b/hw/rtl/VX_decode.sv
-@@ -102,7 +102,7 @@ module VX_decode  #(
+@@ -30,7 +30,9 @@ module VX_decode  #(
+     // outputs
+     VX_decode_if.master decode_if,
+     VX_wstall_if.master wstall_if,
+-    VX_join_if.master   join_if
++    VX_join_if.master   join_if,
++
++    output logic sleep_req_o
+ );
+     `UNUSED_PARAM (CORE_ID)
+     `UNUSED_VAR (clk)
+@@ -79,6 +81,7 @@ module VX_decode  #(
+         use_rd    = 0;
+         is_join   = 0;
+         is_wstall = 0;
++        sleep_req_o = 1'b0;
+ 
+         case (opcode)
+             `INST_I: begin
+@@ -102,7 +105,7 @@ module VX_decode  #(
              end
              `INST_R: begin
                  ex_type = `EX_ALU;
@@ -71,6 +90,23 @@ index 96f400f8..54c44017 100644
                  if (func7[0]) begin
                      case (func3)
                          3'h0: op_type = `INST_OP_BITS'(`INST_MUL_MUL);
+@@ -384,6 +387,16 @@ module VX_decode  #(
+                         op_mod  = `INST_MOD_BITS'(2);
+                         `USED_IREG (rs1);
+                     end
++                    3'h6: begin
++                        sleep_req_o = 1'b1;
++                        ex_type     = `EX_ALU;
++                        op_type     = `INST_OP_BITS'(`INST_ALU_ADD);
++                        use_rd      = 1;
++                        use_imm     = 1;
++                        imm         = {{20{alu_imm[11]}}, alu_imm};
++                        `USED_IREG (rd);
++                        `USED_IREG (rs1);
++                    end
+                     default:;
+                 endcase
+             end
 diff --git a/hw/rtl/VX_define.vh b/hw/rtl/VX_define.vh
 index 35b308cc..f30da4a2 100644
 --- a/hw/rtl/VX_define.vh
@@ -97,3 +133,131 @@ index 9721057b..e7f9c941 100644
      ) divide (
          .clk       (clk),
          .reset     (reset),
+diff --git a/hw/rtl/VX_pipeline.sv b/hw/rtl/VX_pipeline.sv
+index 844fe119..03ca77de 100644
+--- a/hw/rtl/VX_pipeline.sv
++++ b/hw/rtl/VX_pipeline.sv
+@@ -42,7 +42,9 @@ module VX_pipeline #(
+ `endif
+ 
+     // Status
+-    output wire                             busy
++    output wire                             busy,
++
++    output logic                            sleep_req_o
+ );
+     //
+     // Dcache request
+@@ -171,7 +173,8 @@ module VX_pipeline #(
+         .ifetch_rsp_if  (ifetch_rsp_if),
+         .decode_if      (decode_if),
+         .wstall_if      (wstall_if),
+-        .join_if        (join_if)
++        .join_if        (join_if),
++        .sleep_req_o    (sleep_req_o)
+     );
+ 
+     VX_issue #(
+diff --git a/runtime/include/vx_intrinsics.h b/runtime/include/vx_intrinsics.h
+index f3562872..23ba4445 100644
+--- a/runtime/include/vx_intrinsics.h
++++ b/runtime/include/vx_intrinsics.h
+@@ -124,82 +124,86 @@ inline void vx_prefetch(unsigned addr) {
+     asm volatile (".insn s 0x6b, 5, x0, 0(%0)" :: "r"(addr) );
+ }
+ 
+-// Return active warp's thread id 
++// Return active warp's thread id
+ inline int vx_thread_id() {
+     int result;
+     asm volatile ("csrr %0, %1" : "=r"(result) : "i"(CSR_WTID));
+-    return result;   
++    return result;
+ }
+ 
+ // Return active core's local thread id
+ inline int vx_thread_lid() {
+     int result;
+     asm volatile ("csrr %0, %1" : "=r"(result) : "i"(CSR_LTID));
+-    return result;   
++    return result;
+ }
+ 
+ // Return processsor global thread id
+ inline int vx_thread_gid() {
+     int result;
+     asm volatile ("csrr %0, %1" : "=r"(result) : "i"(CSR_GTID));
+-    return result;   
++    return result;
+ }
+ 
+ // Return active core's local warp id
+ inline int vx_warp_id() {
+     int result;
+     asm volatile ("csrr %0, %1" : "=r"(result) : "i"(CSR_LWID));
+-    return result;   
++    return result;
+ }
+ 
+ // Return processsor's global warp id
+ inline int vx_warp_gid() {
+     int result;
+     asm volatile ("csrr %0, %1" : "=r"(result) : "i"(CSR_GWID));
+-    return result;   
++    return result;
+ }
+ 
+ // Return processsor core id
+ inline int vx_core_id() {
+     int result;
+     asm volatile ("csrr %0, %1" : "=r"(result) : "i"(CSR_GCID));
+-    return result; 
++    return result;
+ }
+ 
+ // Return current threadk mask
+ inline int vx_thread_mask() {
+     int result;
+     asm volatile ("csrr %0, %1" : "=r"(result) : "i"(CSR_TMASK));
+-    return result; 
++    return result;
+ }
+ 
+ // Return the number of threads in a warp
+ inline int vx_num_threads() {
+     int result;
+     asm volatile ("csrr %0, %1" : "=r"(result) : "i"(CSR_NT));
+-    return result; 
++    return result;
+ }
+ 
+ // Return the number of warps in a core
+ inline int vx_num_warps() {
+     int result;
+     asm volatile ("csrr %0, %1" : "=r"(result) : "i"(CSR_NW));
+-    return result;   
++    return result;
+ }
+ 
+ // Return the number of cores in the processsor
+ inline int vx_num_cores() {
+     int result;
+     asm volatile ("csrr %0, %1" : "=r"(result) : "i"(CSR_NC));
+-    return result;   
++    return result;
+ }
+ 
+ inline void vx_fence() {
+     asm volatile ("fence iorw, iorw");
+ }
+ 
++inline void vx_sleep() {
++  asm volatile (".insn i 0x6b, 6, x0, x0, 0");
++}
++
+ #define __if(b) vx_split(b); \
+-                if (b) 
++                if (b)
+ 
+ #define __else else
+ 

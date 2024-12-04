@@ -11,10 +11,6 @@
 void main()
 {
   schedule_kernel(&kernel_args);
-
-  kernel_args.done[vx_core_id()] = 1;
-
-  while(1);
 }
 
 void __attribute__ ((noinline)) kernel(unsigned int task_id)

@@ -4,6 +4,8 @@
 //
 // Author: Simone Machetti - simone.machetti@epfl.ch
 
+`include "e_gpu.vh"
+
 `define IN_FILE  "$E_GPU_HOME/hw/imp/sim/input/kernel.mem"
 `define OUT_FILE "$E_GPU_HOME/hw/imp/sim/output/output.mem"
 
@@ -150,7 +152,7 @@ module testbench;
         clk = 1'b1;
         #(clk_period/2);
 
-        if((testbench.host_mem_i.mem_array[`HOST_MEM_KERNEL_ARGS_WORD] == 1) && (testbench.host_mem_i.mem_array[`HOST_MEM_KERNEL_ARGS_WORD + 1] == 1)) begin
+        if(testbench.e_gpu_i.controller_cache_i.logic_cache_i.cu_end == 1'b1) begin
             stop_vcd;
             dump_mem;
             check_results;

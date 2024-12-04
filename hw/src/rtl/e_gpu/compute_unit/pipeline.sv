@@ -16,7 +16,9 @@ module pipeline #(
     VX_icache_rsp_if.slave  l1_instr_cache_rsp,
 
     VX_dcache_req_if.master l1_data_cache_req,
-    VX_dcache_rsp_if.slave  l1_data_cache_rsp
+    VX_dcache_rsp_if.slave  l1_data_cache_rsp,
+
+    output logic sleep_req_o
 );
 
     VX_pipeline #(
@@ -44,7 +46,8 @@ module pipeline #(
         .dcache_rsp_data   (l1_data_cache_rsp.data),
         .dcache_rsp_tag    (l1_data_cache_rsp.tag),
         .dcache_rsp_ready  (l1_data_cache_rsp.ready),
-        .busy              ()
+        .busy              (),
+        .sleep_req_o       (sleep_req_o)
     );
 
 endmodule

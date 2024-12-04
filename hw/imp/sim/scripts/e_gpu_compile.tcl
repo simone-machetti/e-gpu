@@ -6,6 +6,7 @@
 
 vlib work
 
+set lib_input         +incdir+$env(E_GPU_HOME)/hw/imp/sim/input
 set lib_include       +incdir+$env(E_GPU_HOME)/hw/src/rtl
 set lib_vx_rtl        +incdir+$env(E_GPU_HOME)/hw/src/vendor/vortex/hw/rtl
 set lib_vx_libs       +incdir+$env(E_GPU_HOME)/hw/src/vendor/vortex/hw/rtl/libs
@@ -146,6 +147,7 @@ if {$env(SEL_MEM_HIER) == "CACHE"} {
 
     # /hw/src/rtl/e_gpu/controller_cache
     vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/e_gpu/controller_cache/config_regs_cache.sv
+    vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/e_gpu/controller_cache/logic_cache.sv
 
     # /hw/src/rtl/e_gpu/l2_shared_cache/bus_adapter
     vlog -work work $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/e_gpu/l2_shared_cache/bus_adapter/serializer.sv

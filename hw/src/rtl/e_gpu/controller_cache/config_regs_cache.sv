@@ -14,15 +14,14 @@ module config_regs_cache
     obi_req_if.slave  regs_req,
     obi_rsp_if.master regs_rsp,
 
-    output logic clk_core_en_o,
-    output logic rst_n_core_o
+    output logic gpu_start_o
 );
 
     /*
     * REGISTERS:
     *
-    * - regs[0][0] : start - active high (default: 0)
-    * - regs[1][0] : reset - active low  (default: 0)
+    * - regs[0][0] : GPU start - active high (default: 0)
+    * - regs[1]    : unused
     * - regs[2]    : unused
     * - regs[3]    : unused
     *
@@ -40,8 +39,7 @@ module config_regs_cache
     logic [1:0]  addr;
     logic [31:0] wdata;
 
-    assign clk_core_en_o = curr_regs[0][0];
-    assign rst_n_core_o  = curr_regs[1][0];
+    assign gpu_start_o = curr_regs[0][0];
 
     always_ff @(posedge(clk_i) or negedge(rst_ni)) begin
         if (!rst_ni) begin

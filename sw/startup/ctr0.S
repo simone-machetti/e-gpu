@@ -20,6 +20,7 @@ _start:
     .insn s 0x6b, 0, x0, 0(a0) # disactivate all threads but 0
 
     call main                  # call main
+    .insn i 0x6b, 6, x0, x0, 0 # generate a sleep event
     j _loop                    # jump to _loop
 
 _loop:

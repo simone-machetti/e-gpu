@@ -25,10 +25,10 @@ begin
         write_kernel_data(`ARRAY_C_OFFSET + i, 0);
     end
 
-    write_kernel_args(32'h08, `NUM_TASKS);
-    write_kernel_args(32'h0C, `HOST_MEM_KERNEL_DATA + `ARRAY_A_OFFSET);
-    write_kernel_args(32'h10, `HOST_MEM_KERNEL_DATA + `ARRAY_B_OFFSET);
-    write_kernel_args(32'h14, `HOST_MEM_KERNEL_DATA + `ARRAY_C_OFFSET);
+    write_kernel_args(32'h0, `NUM_TASKS);
+    write_kernel_args(32'h4, `HOST_MEM_KERNEL_DATA + `ARRAY_A_OFFSET);
+    write_kernel_args(32'h8, `HOST_MEM_KERNEL_DATA + `ARRAY_B_OFFSET);
+    write_kernel_args(32'hC, `HOST_MEM_KERNEL_DATA + `ARRAY_C_OFFSET);
 end
 endtask
 

@@ -16,7 +16,9 @@ module compute_unit #(
     VX_mem_rsp_if.slave  l2_instr_cache_rsp,
 
     VX_mem_req_if.master l2_data_cache_req,
-    VX_mem_rsp_if.slave  l2_data_cache_rsp
+    VX_mem_rsp_if.slave  l2_data_cache_rsp,
+
+    output logic sleep_req_o
 );
 
     VX_icache_req_if #(
@@ -49,7 +51,8 @@ module compute_unit #(
         .l1_instr_cache_req (l1_instr_cache_req),
         .l1_instr_cache_rsp (l1_instr_cache_rsp),
         .l1_data_cache_req  (l1_data_cache_req),
-        .l1_data_cache_rsp  (l1_data_cache_rsp)
+        .l1_data_cache_rsp  (l1_data_cache_rsp),
+        .sleep_req_o        (sleep_req_o)
     );
 
     l1_instr_cache l1_instr_cache_i (

@@ -21,6 +21,16 @@ module e_gpu
     logic clk_core;
     logic rst_n_core;
 
+    logic cu_sleep_req[`NUM_COMPUTE_UNITS];
+    logic cu_delay_sleep[`NUM_COMPUTE_UNITS];
+    logic cu_clk_en[`NUM_COMPUTE_UNITS];
+    logic cu_clk[`NUM_COMPUTE_UNITS];
+    logic cu_rst_n[`NUM_COMPUTE_UNITS];
+
+    logic l2_clk_en;
+    logic l2_clk;
+    logic l2_rst_n;
+
     VX_mem_req_if #(
         .DATA_WIDTH (`ICACHE_MEM_DATA_WIDTH),
         .ADDR_WIDTH (`ICACHE_MEM_ADDR_WIDTH),
@@ -63,12 +73,21 @@ module e_gpu
             compute_unit #(
                 .COMPUTE_UNIT_ID    (cu)
             ) compute_unit_i (
-                .clk_i              (clk_core),
-                .rst_ni             (rst_n_core),
+                .clk_i              (cu_clk[cu]),
+                .rst_ni             (cu_rst_n[cu]),
                 .l2_instr_cache_req (l2_instr_cache_req[cu]),
                 .l2_instr_cache_rsp (l2_instr_cache_rsp[cu]),
                 .l2_data_cache_req  (l2_data_cache_req[cu]),
-                .l2_data_cache_rsp  (l2_data_cache_rsp[cu])
+                .l2_data_cache_rsp  (l2_data_cache_rsp[cu]),
+                .sleep_req_o        (cu_sleep_req[cu])
+            );
+
+            assign cu_delay_sleep[cu] = l2_data_cache_req[cu].valid;
+
+            clock_gating_cell_wrapper cu_clock_gating_cell_i (
+                .clk_i (clk_i),
+                .en_i  (cu_clk_en[cu]),
+                .clk_o (cu_clk[cu])
             );
 
             assign l2_cache_req.valid [(2 * cu)]     = l2_instr_cache_req[cu].valid;
@@ -102,21 +121,31 @@ module e_gpu
     endgenerate
 
     l2_shared_cache l2_shared_cache_i (
-        .clk_i        (clk_core),
-        .rst_ni       (rst_n_core),
+        .clk_i        (l2_clk),
+        .rst_ni       (l2_rst_n),
         .l2_cache_req (l2_cache_req),
         .l2_cache_rsp (l2_cache_rsp),
         .host_req     (host_mem_req),
         .host_rsp     (host_mem_rsp)
     );
 
+    clock_gating_cell_wrapper l2_clock_gating_cell_i (
+        .clk_i (clk_i),
+        .en_i  (l2_clk_en),
+        .clk_o (l2_clk)
+    );
+
     controller_cache controller_cache_i (
-        .clk_i        (clk_i),
-        .rst_ni       (rst_ni),
-        .regs_req     (conf_regs_req),
-        .regs_rsp     (conf_regs_rsp),
-        .clk_core_o   (clk_core),
-        .rst_n_core_o (rst_n_core)
+        .clk_i            (clk_i),
+        .rst_ni           (rst_ni),
+        .regs_req         (conf_regs_req),
+        .regs_rsp         (conf_regs_rsp),
+        .cu_sleep_req_i   (cu_sleep_req),
+        .cu_delay_sleep_i (cu_delay_sleep),
+        .cu_clk_en_o      (cu_clk_en),
+        .cu_rst_n_o       (cu_rst_n),
+        .l2_clk_en_o      (l2_clk_en),
+        .l2_rst_n_o       (l2_rst_n)
     );
 
 endmodule

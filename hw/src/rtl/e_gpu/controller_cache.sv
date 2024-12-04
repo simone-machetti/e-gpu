@@ -14,25 +14,36 @@ module controller_cache
     obi_req_if.slave  regs_req,
     obi_rsp_if.master regs_rsp,
 
-    output logic clk_core_o,
-    output logic rst_n_core_o
+    input logic cu_sleep_req_i[`NUM_COMPUTE_UNITS],
+    input logic cu_delay_sleep_i[`NUM_COMPUTE_UNITS],
+
+    output logic cu_clk_en_o[`NUM_COMPUTE_UNITS],
+    output logic cu_rst_n_o[`NUM_COMPUTE_UNITS],
+
+    output logic l2_clk_en_o,
+    output logic l2_rst_n_o
 );
 
-    logic clk_core_en;
+    logic gpu_start;
 
-    clock_gating_cell_wrapper clock_gating_cell_wrapper_i (
-        .clk_i (clk_i),
-        .en_i  (clk_core_en),
-        .clk_o (clk_core_o)
+    logic_cache logic_cache_i (
+        .clk_i            (clk_i),
+        .rst_ni           (rst_ni),
+        .gpu_start_i      (gpu_start),
+        .cu_sleep_req_i   (cu_sleep_req_i),
+        .cu_delay_sleep_i (cu_delay_sleep_i),
+        .cu_clk_en_o      (cu_clk_en_o),
+        .cu_rst_n_o       (cu_rst_n_o),
+        .l2_clk_en_o      (l2_clk_en_o),
+        .l2_rst_n_o       (l2_rst_n_o)
     );
 
     config_regs_cache config_regs_cache_i (
-        .clk_i         (clk_i),
-        .rst_ni        (rst_ni),
-        .regs_req      (regs_req),
-        .regs_rsp      (regs_rsp),
-        .clk_core_en_o (clk_core_en),
-        .rst_n_core_o  (rst_n_core_o)
+        .clk_i       (clk_i),
+        .rst_ni      (rst_ni),
+        .regs_req    (regs_req),
+        .regs_rsp    (regs_rsp),
+        .gpu_start_o (gpu_start)
     );
 
 endmodule
