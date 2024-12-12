@@ -5,8 +5,10 @@
 # Author: Simone Machetti - simone.machetti@epfl.ch
 
 MEM_HIER ?= CACHE
-APP_NAME ?= vec_copy
+APP_NAME ?= vec_add
 SIM_GUI  ?= 0
+
+VORTEX = $(E_GPU_HOME)/hw/src/vendor/vortex
 
 VX_CC  = $(RISCV_TOOLCHAIN_PATH)/bin/riscv32-unknown-elf-gcc
 VX_DP  = $(RISCV_TOOLCHAIN_PATH)/bin/riscv32-unknown-elf-objdump
@@ -57,9 +59,26 @@ endif
 wave:
 	gtkwave $(E_GPU_HOME)/hw/imp/sim/output/output.vcd &
 
-clean:
+vendor:
+	cd $(E_GPU_HOME)/hw/src/vendor && \
+	python3 vendor.py vortex.vendor.hjson --update && \
+	python3 $(VORTEX)/hw/scripts/gen_config.py -i $(VORTEX)/hw/rtl/VX_config.vh -o $(VORTEX)/runtime/include/VX_config.h && \
+	python3 vendor.py common_cells.vendor.hjson --update && \
+	python3 vendor.py crossbar.vendor.hjson --update
+
+clean: clean-app clean-vendor
+
+clean-app:
 	rm -rf $(E_GPU_HOME)/sw/apps/$(APP_NAME)/build
 	rm -rf $(E_GPU_HOME)/sw/apps/$(APP_NAME)/work
 	rm -rf $(E_GPU_HOME)/sw/apps/$(APP_NAME)/transcript
 	rm -rf $(E_GPU_HOME)/hw/imp/sim/input
 	rm -rf $(E_GPU_HOME)/hw/imp/sim/output
+
+clean-vendor:
+	rm -rf $(E_GPU_HOME)/hw/src/vendor/vortex
+	rm -rf $(E_GPU_HOME)/hw/src/vendor/vortex.lock.hjson
+	rm -rf $(E_GPU_HOME)/hw/src/vendor/common_cells
+	rm -rf $(E_GPU_HOME)/hw/src/vendor/common_cells.lock.hjson
+	rm -rf $(E_GPU_HOME)/hw/src/vendor/crossbar
+	rm -rf $(E_GPU_HOME)/hw/src/vendor/crossbar.lock.hjson
