@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:133.0) Gecko/20100101 Firefox/133.0" version="25.0.3">
   <diagram name="Page-1" id="ttSeB0aqmlv9iaVI3G1_">
-    <mxGraphModel dx="1114" dy="463" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+    <mxGraphModel dx="2155" dy="852" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -28,8 +28,8 @@
         <mxCell id="VglCFeeanNJNbNrB5pQk-119" value="..." style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#FFEECD;fontSize=13;rotation=90;fontStyle=1;shadow=1;" parent="1" vertex="1">
           <mxGeometry x="1658.2976142131977" y="868.405420875421" width="63.41116751269036" height="53.18653198653198" as="geometry" />
         </mxCell>
-        <mxCell id="VglCFeeanNJNbNrB5pQk-75" value="&lt;div&gt;L2 Shared Cache&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;glass=0;shadow=1;fontFamily=Helvetica;textShadow=0;container=0;strokeWidth=1;arcSize=3;fontStyle=1;shadowOffsetX=4;shadowOffsetY=4;shadowBlur=5;shadowOpacity=20;fillColor=#FFE8BB;strokeColor=none;fontColor=#404040;gradientColor=#F0DAB0;gradientDirection=south;" parent="1" vertex="1">
-          <mxGeometry x="1600" y="1120" width="880" height="120" as="geometry" />
+        <mxCell id="VglCFeeanNJNbNrB5pQk-75" value="&lt;div&gt;L2 Shared Scratchpad&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;glass=0;shadow=1;fontFamily=Helvetica;textShadow=0;container=0;strokeWidth=1;arcSize=3;fontStyle=1;shadowOffsetX=4;shadowOffsetY=4;shadowBlur=5;shadowOpacity=20;fillColor=#FFE8BB;strokeColor=none;fontColor=#404040;gradientColor=#F0DAB0;gradientDirection=south;" parent="1" vertex="1">
+          <mxGeometry x="1600" y="1170" width="880" height="70" as="geometry" />
         </mxCell>
         <mxCell id="TLnTH0tGiMMeXSjsY8Ds-89" value="" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;glass=0;shadow=1;fontFamily=Helvetica;textShadow=0;container=0;strokeWidth=1;arcSize=2;fontStyle=1;shadowOffsetX=4;shadowOffsetY=4;shadowBlur=5;shadowOpacity=20;fillColor=#FFE8BB;strokeColor=none;fontColor=#404040;gradientColor=#F0DAB0;gradientDirection=south;" parent="1" vertex="1">
           <mxGeometry x="1610" y="770" width="560" height="250" as="geometry" />
@@ -93,6 +93,9 @@
             <mxPoint x="2514.66" y="1330" as="sourcePoint" />
             <mxPoint x="2514.66" y="1280" as="targetPoint" />
           </mxGeometry>
+        </mxCell>
+        <mxCell id="TvzEmClg-EJ_HF19WAZD-1" value="Interleaved Crossbar" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;glass=0;shadow=1;fontFamily=Helvetica;textShadow=0;container=0;strokeWidth=1;arcSize=6;fontStyle=1;shadowOffsetX=4;shadowOffsetY=4;shadowBlur=5;shadowOpacity=20;fillColor=#FFE8BB;strokeColor=none;fontColor=#404040;gradientColor=#F0DAB0;gradientDirection=south;" parent="1" vertex="1">
+          <mxGeometry x="1600" y="1120" width="880" height="40" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
