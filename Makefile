@@ -19,7 +19,7 @@ VX_CFLAGS  += -I$(E_GPU_HOME)/hw/src/vendor/vortex/runtime/include -I$(E_GPU_HOM
 VX_LDFLAGS += -Wl,-Bstatic,-T,$(E_GPU_HOME)/sw/link/link32.ld -Wl,--gc-sections
 VX_SRCS     = $(E_GPU_HOME)/sw/apps/$(APP_NAME)/src/kernel.c $(E_GPU_HOME)/sw/lib/src/e_gpu_scheduler.c $(E_GPU_HOME)/sw/startup/ctr0.S
 
-all: kernel.bin kernel.dump
+all: clean-app kernel.bin kernel.dump
 
 kernel.elf: $(VX_SRCS)
 	mkdir -p $(E_GPU_HOME)/sw/apps/$(APP_NAME)/build
@@ -59,7 +59,7 @@ endif
 wave:
 	gtkwave $(E_GPU_HOME)/hw/imp/sim/output/output.vcd &
 
-vendor:
+vendor: clean-vendor
 	cd $(E_GPU_HOME)/hw/src/vendor && \
 	python3 vendor.py vortex.vendor.hjson --update && \
 	python3 $(VORTEX)/hw/scripts/gen_config.py -i $(VORTEX)/hw/rtl/VX_config.vh -o $(VORTEX)/runtime/include/VX_config.h && \
@@ -69,9 +69,7 @@ vendor:
 clean: clean-app clean-vendor
 
 clean-app:
-	rm -rf $(E_GPU_HOME)/sw/apps/$(APP_NAME)/build
-	rm -rf $(E_GPU_HOME)/sw/apps/$(APP_NAME)/work
-	rm -rf $(E_GPU_HOME)/sw/apps/$(APP_NAME)/transcript
+	for app in $(wildcard $(E_GPU_HOME)/sw/apps/*); do rm -rf $$app/build $$app/work $$app/transcript; done
 	rm -rf $(E_GPU_HOME)/hw/imp/sim/input
 	rm -rf $(E_GPU_HOME)/hw/imp/sim/output
 
