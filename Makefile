@@ -66,7 +66,11 @@ vendor: clean-vendor
 	python3 vendor.py common_cells.vendor.hjson --update && \
 	python3 vendor.py crossbar.vendor.hjson --update
 
-clean: clean-app clean-vendor
+sram:
+	cd $(E_GPU_HOME)/hw/src/rtl/common/mem/arm_sram && \
+	./gen_sram.sh
+
+clean: clean-app
 
 clean-app:
 	for app in $(wildcard $(E_GPU_HOME)/sw/apps/*); do rm -rf $$app/build $$app/work $$app/transcript; done
@@ -80,3 +84,7 @@ clean-vendor:
 	rm -rf $(E_GPU_HOME)/hw/src/vendor/common_cells.lock.hjson
 	rm -rf $(E_GPU_HOME)/hw/src/vendor/crossbar
 	rm -rf $(E_GPU_HOME)/hw/src/vendor/crossbar.lock.hjson
+
+clean-sram:
+	rm -rf $(E_GPU_HOME)/hw/src/rtl/common/mem/arm_sram/build
+	rm -rf $(E_GPU_HOME)/hw/src/rtl/common/mem/arm_sram/rf256x32m2
