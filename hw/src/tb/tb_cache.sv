@@ -4,6 +4,8 @@
 //
 // Author: Simone Machetti - simone.machetti@epfl.ch
 
+`timescale 1 ns/1 ps
+
 `include "e_gpu.vh"
 
 `define IN_FILE  "$E_GPU_HOME/hw/imp/sim/input/kernel.mem"

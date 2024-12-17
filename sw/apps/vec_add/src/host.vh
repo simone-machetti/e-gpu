@@ -7,7 +7,7 @@
 `ifndef HOST
 `define HOST
 
-`define NUM_TASKS 188
+`define NUM_TASKS 64
 
 `define ARRAY_SIZE (`NUM_TASKS * 4)
 

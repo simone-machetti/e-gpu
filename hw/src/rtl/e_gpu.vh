@@ -13,6 +13,8 @@
 
 `define STARTUP_ADDR 32'h00000000
 
+// `define ARM_SRAM
+
 `include "VX_define.vh"
 
 `endif

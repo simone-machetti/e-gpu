@@ -120,6 +120,166 @@ index 35b308cc..f30da4a2 100644
  
  // Memory request tag bits
  `define _L2_MEM_ADDR_RATIO_W     $clog2(`L2_CACHE_LINE_SIZE / `L2_WORD_SIZE)
+diff --git a/hw/rtl/VX_gpr_stage.sv b/hw/rtl/VX_gpr_stage.sv
+index 7dd3f00c..827d9944 100644
+--- a/hw/rtl/VX_gpr_stage.sv
++++ b/hw/rtl/VX_gpr_stage.sv
+@@ -33,32 +33,32 @@ module VX_gpr_stage #(
+     assign raddr2 = {gpr_req_if.wid, gpr_req_if.rs2};
+ 
+     for (genvar i = 0; i < `NUM_THREADS; ++i) begin
+-        VX_dp_ram #(
+-            .DATAW       (32),
+-            .SIZE        (RAM_SIZE),
+-            .INIT_ENABLE (1),
+-            .INIT_VALUE  (0)
+-        ) dp_ram1 (
+-            .clk   (clk),
+-            .wren  (wren[i]),
+-            .waddr (waddr),
+-            .wdata (writeback_if.data[i]),
+-            .raddr (raddr1),
+-            .rdata (gpr_rsp_if.rs1_data[i])
++        double_port_mem_wrapper #(
++            .DATAW   (32),
++            .SIZE    (RAM_SIZE),
++            .OUT_REG (0)
++        ) dp_ram1_i (
++            .clk_i   (clk),
++            .rst_ni  (~reset),
++            .wren_i  (wren[i]),
++            .waddr_i (waddr),
++            .wdata_i (writeback_if.data[i]),
++            .raddr_i (raddr1),
++            .rdata_o (gpr_rsp_if.rs1_data[i])
+         );
+ 
+-        VX_dp_ram #(
+-            .DATAW       (32),
+-            .SIZE        (RAM_SIZE),
+-            .INIT_ENABLE (1),
+-            .INIT_VALUE  (0)
+-        ) dp_ram2 (
+-            .clk   (clk),
+-            .wren  (wren[i]),
+-            .waddr (waddr),
+-            .wdata (writeback_if.data[i]),
+-            .raddr (raddr2),
+-            .rdata (gpr_rsp_if.rs2_data[i])
++        double_port_mem_wrapper #(
++            .DATAW   (32),
++            .SIZE    (RAM_SIZE),
++            .OUT_REG (0)
++        ) dp_ram2_i (
++            .clk_i   (clk),
++            .rst_ni  (~reset),
++            .wren_i  (wren[i]),
++            .waddr_i (waddr),
++            .wdata_i (writeback_if.data[i]),
++            .raddr_i (raddr2),
++            .rdata_o (gpr_rsp_if.rs2_data[i])
+         );
+     end
+ 
+@@ -67,18 +67,18 @@ module VX_gpr_stage #(
+     assign raddr3 = {gpr_req_if.wid, gpr_req_if.rs3};
+ 
+     for (genvar i = 0; i < `NUM_THREADS; ++i) begin
+-        VX_dp_ram #(
+-            .DATAW       (32),
+-            .SIZE        (RAM_SIZE),
+-            .INIT_ENABLE (1),
+-            .INIT_VALUE  (0)
+-        ) dp_ram3 (
+-            .clk   (clk),
+-            .wren  (wren[i]),
+-            .waddr (waddr),
+-            .wdata (writeback_if.data[i]),
+-            .raddr (raddr3),
+-            .rdata (gpr_rsp_if.rs3_data[i])
++        double_port_mem_wrapper #(
++            .DATAW   (32),
++            .SIZE    (RAM_SIZE),
++            .OUT_REG (0)
++        ) dp_ram3_i (
++            .clk_i   (clk),
++            .rst_ni  (~reset),
++            .wren_i  (wren[i]),
++            .waddr_i (waddr),
++            .wdata_i (writeback_if.data[i]),
++            .raddr_i (raddr3),
++            .rdata_o (gpr_rsp_if.rs3_data[i])
+         );
+     end
+ `else
+diff --git a/hw/rtl/VX_icache_stage.sv b/hw/rtl/VX_icache_stage.sv
+index 5d3bdfa9..0853c094 100644
+--- a/hw/rtl/VX_icache_stage.sv
++++ b/hw/rtl/VX_icache_stage.sv
+@@ -35,17 +35,18 @@ module VX_icache_stage #(
+     wire [31:0] rsp_PC;
+     wire [`NUM_THREADS-1:0] rsp_tmask;
+ 
+-    VX_dp_ram #(
+-        .DATAW  (32 + `NUM_THREADS + `UUID_BITS),
+-        .SIZE   (`NUM_WARPS),
+-        .LUTRAM (1)
+-    ) req_metadata (
+-        .clk   (clk),
+-        .wren  (icache_req_fire),
+-        .waddr (req_tag),
+-        .wdata ({ifetch_req_if.PC, ifetch_req_if.tmask, ifetch_req_if.uuid}),
+-        .raddr (rsp_tag),
+-        .rdata ({rsp_PC, rsp_tmask, rsp_uuid})
++    double_port_mem_wrapper #(
++        .DATAW   (32 + `NUM_THREADS + `UUID_BITS),
++        .SIZE    (`NUM_WARPS),
++        .OUT_REG (0)
++    ) req_metadata_i (
++        .clk_i   (clk),
++        .rst_ni  (~reset),
++        .wren_i  (icache_req_fire),
++        .waddr_i (req_tag),
++        .wdata_i ({ifetch_req_if.PC, ifetch_req_if.tmask, ifetch_req_if.uuid}),
++        .raddr_i (rsp_tag),
++        .rdata_o ({rsp_PC, rsp_tmask, rsp_uuid})
+     );
+ 
+     `RUNTIME_ASSERT((!ifetch_req_if.valid || ifetch_req_if.PC >= `STARTUP_ADDR),
+diff --git a/hw/rtl/VX_ipdom_stack.sv b/hw/rtl/VX_ipdom_stack.sv
+index 985a2a87..e61596d1 100644
+--- a/hw/rtl/VX_ipdom_stack.sv
++++ b/hw/rtl/VX_ipdom_stack.sv
+@@ -39,17 +39,18 @@ module VX_ipdom_stack #(
+         end
+     end
+ 
+-    VX_dp_ram #(
+-        .DATAW  (WIDTH * 2),
+-        .SIZE   (DEPTH),
+-        .LUTRAM (1)
+-    ) store (
+-        .clk   (clk),
+-        .wren  (push),
+-        .waddr (wr_ptr),
+-        .wdata ({q2, q1}),
+-        .raddr (rd_ptr),
+-        .rdata ({d2, d1})
++    double_port_mem_wrapper #(
++        .DATAW   (WIDTH * 2),
++        .SIZE    (DEPTH),
++        .OUT_REG (0)
++    ) store_i (
++        .clk_i   (clk),
++        .rst_ni  (~reset),
++        .wren_i  (push),
++        .waddr_i (wr_ptr),
++        .wdata_i ({q2, q1}),
++        .raddr_i (rd_ptr),
++        .rdata_o ({d2, d1})
+     );
+ 
+     always @(posedge clk) begin
 diff --git a/hw/rtl/VX_muldiv.sv b/hw/rtl/VX_muldiv.sv
 index 9721057b..e7f9c941 100644
 --- a/hw/rtl/VX_muldiv.sv
@@ -158,6 +318,234 @@ index 844fe119..03ca77de 100644
      );
  
      VX_issue #(
+diff --git a/hw/rtl/cache/VX_data_access.sv b/hw/rtl/cache/VX_data_access.sv
+index fe7f08aa..24e2df64 100644
+--- a/hw/rtl/cache/VX_data_access.sv
++++ b/hw/rtl/cache/VX_data_access.sv
+@@ -93,17 +93,17 @@ module VX_data_access #(
+         assign wren  = fill;
+     end
+ 
+-    VX_sp_ram #(
+-        .DATAW      (`CACHE_LINE_WIDTH),
+-        .SIZE       (`LINES_PER_BANK),
+-        .BYTEENW    (BYTEENW),
+-        .NO_RWCHECK (1)
+-    ) data_store (
+-        .clk   (clk),
+-        .addr  (line_addr),
+-        .wren  (wren),
+-        .wdata (wdata),
+-        .rdata (rdata)
++    single_port_mem_wrapper #(
++        .DATAW   (`CACHE_LINE_WIDTH),
++        .SIZE    (`LINES_PER_BANK),
++        .BYTEENW (BYTEENW)
++    ) data_store_i (
++        .clk_i   (~clk),
++        .rst_ni  (~reset),
++        .addr_i  (line_addr),
++        .wren_i  (wren),
++        .wdata_i (wdata),
++        .rdata_o (rdata)
+     );
+ 
+     if (`WORDS_PER_LINE > 1) begin
+diff --git a/hw/rtl/cache/VX_miss_resrv.sv b/hw/rtl/cache/VX_miss_resrv.sv
+index 0b755e23..81d362f3 100644
+--- a/hw/rtl/cache/VX_miss_resrv.sv
++++ b/hw/rtl/cache/VX_miss_resrv.sv
+@@ -167,17 +167,18 @@ module VX_miss_resrv #(
+     `RUNTIME_ASSERT((!fill_valid || valid_table[fill_id]), ("%t: *** cache%0d:%0d invalid fill: addr=%0h, id=%0d", $time, CACHE_ID, BANK_ID,
+         `LINE_TO_BYTE_ADDR(addr_table[fill_id], BANK_ID), fill_id))
+ 
+-    VX_dp_ram #(
+-        .DATAW  (`MSHR_DATA_WIDTH),
+-        .SIZE   (MSHR_SIZE),
+-        .LUTRAM (1)
+-    ) entries (
+-        .clk   (clk),
+-        .waddr (allocate_id_r),
+-        .raddr (dequeue_id_r),
+-        .wren  (allocate_valid),
+-        .wdata (allocate_data),
+-        .rdata (dequeue_data)
++    double_port_mem_wrapper #(
++        .DATAW   (`MSHR_DATA_WIDTH),
++        .SIZE    (MSHR_SIZE),
++        .OUT_REG (0)
++    ) entries_i (
++        .clk_i   (clk),
++        .rst_ni  (~reset),
++        .wren_i  (allocate_valid),
++        .waddr_i (allocate_id_r),
++        .wdata_i (allocate_data),
++        .raddr_i (dequeue_id_r),
++        .rdata_o (dequeue_data)
+     );
+ 
+     assign fill_addr = addr_table[fill_id];
+diff --git a/hw/rtl/cache/VX_shared_mem.sv b/hw/rtl/cache/VX_shared_mem.sv
+index ebe99747..3856de42 100644
+--- a/hw/rtl/cache/VX_shared_mem.sv
++++ b/hw/rtl/cache/VX_shared_mem.sv
+@@ -173,17 +173,17 @@ module VX_shared_mem #(
+ 
+         wire [`LINE_SELECT_BITS-1:0] addr = per_bank_core_req_addr[i][`LINE_SELECT_BITS-1:0];
+ 
+-        VX_sp_ram #(
+-            .DATAW      (`WORD_WIDTH),
+-            .SIZE       (`LINES_PER_BANK),
+-            .BYTEENW    (WORD_SIZE),
+-            .NO_RWCHECK (1)
+-        ) data_store (
+-            .clk   (clk),
+-            .addr  (addr),
+-            .wren  (wren),
+-            .wdata (per_bank_core_req_data[i]),
+-            .rdata (per_bank_core_rsp_data[i])
++        single_port_mem_wrapper #(
++            .DATAW   (`WORD_WIDTH),
++            .SIZE    (`LINES_PER_BANK),
++            .BYTEENW (WORD_SIZE)
++        ) data_store_i (
++            .clk_i   (~clk),
++            .rst_ni  (~reset),
++            .addr_i  (addr),
++            .wren_i  (wren),
++            .wdata_i (per_bank_core_req_data[i]),
++            .rdata_o (per_bank_core_rsp_data[i])
+         );
+     end
+ 
+diff --git a/hw/rtl/cache/VX_tag_access.sv b/hw/rtl/cache/VX_tag_access.sv
+index 7a080df4..06f2041e 100644
+--- a/hw/rtl/cache/VX_tag_access.sv
++++ b/hw/rtl/cache/VX_tag_access.sv
+@@ -42,16 +42,17 @@ module VX_tag_access #(
+     wire [`LINE_SELECT_BITS-1:0] line_addr = addr[`LINE_SELECT_BITS-1:0];
+     wire [`TAG_SELECT_BITS-1:0] line_tag = `LINE_TAG_ADDR(addr);
+ 
+-    VX_sp_ram #(
+-        .DATAW      (`TAG_SELECT_BITS + 1),
+-        .SIZE       (`LINES_PER_BANK),
+-        .NO_RWCHECK (1)
+-    ) tag_store (
+-        .clk(  clk),
+-        .addr  (line_addr),
+-        .wren  (fill || flush),
+-        .wdata ({!flush, line_tag}),
+-        .rdata ({read_valid, read_tag})
++    single_port_mem_wrapper #(
++        .DATAW   (`TAG_SELECT_BITS + 1),
++        .SIZE    (`LINES_PER_BANK),
++        .BYTEENW (1)
++    ) tag_store_i (
++        .clk_i   (~clk),
++        .rst_ni  (~reset),
++        .addr_i  (line_addr),
++        .wren_i  (fill || flush),
++        .wdata_i ({!flush, line_tag}),
++        .rdata_o ({read_valid, read_tag})
+     );
+ 
+     assign tag_match = read_valid && (line_tag == read_tag);
+diff --git a/hw/rtl/libs/VX_fifo_queue.sv b/hw/rtl/libs/VX_fifo_queue.sv
+index 34259f53..daf53ac6 100644
+--- a/hw/rtl/libs/VX_fifo_queue.sv
++++ b/hw/rtl/libs/VX_fifo_queue.sv
+@@ -153,18 +153,18 @@ module VX_fifo_queue #(
+                     end
+                 end
+ 
+-                VX_dp_ram #(
++                double_port_mem_wrapper #(
+                     .DATAW   (DATAW),
+                     .SIZE    (SIZE),
+-                    .OUT_REG (0),
+-                    .LUTRAM  (LUTRAM)
+-                ) dp_ram (
+-                    .clk(clk),
+-                    .wren  (push),
+-                    .waddr (wr_ptr_r),
+-                    .wdata (data_in),
+-                    .raddr (rd_ptr_r),
+-                    .rdata (data_out)
++                    .OUT_REG (0)
++                ) dp_ram_i (
++                    .clk_i   (clk),
++                    .rst_ni  (~reset),
++                    .wren_i  (push),
++                    .waddr_i (wr_ptr_r),
++                    .wdata_i (data_in),
++                    .raddr_i (rd_ptr_r),
++                    .rdata_o (data_out)
+                 );
+ 
+             end else begin
+@@ -195,18 +195,18 @@ module VX_fifo_queue #(
+                     end
+                 end
+ 
+-                VX_dp_ram #(
++                double_port_mem_wrapper #(
+                     .DATAW   (DATAW),
+                     .SIZE    (SIZE),
+-                    .OUT_REG (0),
+-                    .LUTRAM  (LUTRAM)
+-                ) dp_ram (
+-                    .clk   (clk),
+-                    .wren  (push),
+-                    .waddr (wr_ptr_r),
+-                    .wdata (data_in),
+-                    .raddr (rd_ptr_n_r),
+-                    .rdata (dout)
++                    .OUT_REG (0)
++                ) dp_ram_i (
++                    .clk_i   (clk),
++                    .rst_ni  (~reset),
++                    .wren_i  (push),
++                    .waddr_i (wr_ptr_r),
++                    .wdata_i (data_in),
++                    .raddr_i (rd_ptr_n_r),
++                    .rdata_o (dout)
+                 );
+ 
+                 always @(posedge clk) begin
+diff --git a/hw/rtl/libs/VX_index_buffer.sv b/hw/rtl/libs/VX_index_buffer.sv
+index 9f12155e..ab1b685e 100644
+--- a/hw/rtl/libs/VX_index_buffer.sv
++++ b/hw/rtl/libs/VX_index_buffer.sv
+@@ -67,17 +67,18 @@ module VX_index_buffer #(
+         end
+     end
+ 
+-    VX_dp_ram #(
+-        .DATAW  (DATAW),
+-        .SIZE   (SIZE),
+-        .LUTRAM (LUTRAM)
+-    ) data_table (
+-        .clk   (clk),
+-        .wren  (acquire_slot),
+-        .waddr (write_addr_r),
+-        .wdata (write_data),
+-        .raddr (read_addr),
+-        .rdata (read_data)
++    double_port_mem_wrapper #(
++        .DATAW   (DATAW),
++        .SIZE    (SIZE),
++        .OUT_REG (0)
++    ) data_table_i (
++        .clk_i   (clk),
++        .rst_ni  (~reset),
++        .wren_i  (acquire_slot),
++        .waddr_i (write_addr_r),
++        .wdata_i (write_data),
++        .raddr_i (read_addr),
++        .rdata_o (read_data)
+     );
+ 
+     assign write_addr = write_addr_r;
 diff --git a/runtime/include/vx_intrinsics.h b/runtime/include/vx_intrinsics.h
 index f3562872..23ba4445 100644
 --- a/runtime/include/vx_intrinsics.h
