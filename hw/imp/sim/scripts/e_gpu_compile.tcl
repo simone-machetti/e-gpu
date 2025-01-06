@@ -132,6 +132,8 @@ vlog -work work $lib_input $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfa
 vlog -work work $lib_input $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/common/mem/single_port_mem_wrapper.sv
 vlog -work work $lib_input $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/common/mem/double_port_mem_behavioral.sv
 vlog -work work $lib_input $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/common/mem/double_port_mem_wrapper.sv
+vlog -work work $lib_input $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/common/mem/triple_port_mem_behavioral.sv
+vlog -work work $lib_input $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/common/mem/triple_port_mem_wrapper.sv
 
 if {$env(SEL_MEM_HIER) == "CACHE"} {
 
