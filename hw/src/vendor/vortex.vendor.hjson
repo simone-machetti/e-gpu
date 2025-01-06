@@ -12,38 +12,6 @@
 
   upstream: {
     url: "git@github.com:simone-machetti/vortex.git",
-    rev: "1c9734188de8f24cb4560eea00ba8f1254e1f450",
+    rev: "a06ee6c11e613e89db3dbf6dafac70353dfee272",
   },
-
-  patch_dir: "patches/vortex",
-
-  exclude_from_upstream: [
-    "ci",
-    "docs",
-    "hw/dpi",
-    "hw/scripts/scope.json",
-    "hw/scripts/scope.py",
-    "hw/syn",
-    "hw/unit_tests",
-    "hw/.gitignore",
-    "hw/Makefile",
-    "runtime/include/vx_print.h"
-    "runtime/include/vx_spawn.h"
-    "runtime/linker"
-    "runtime/src"
-    "runtime/.gitignore"
-    "runtime/Makefile"
-    "driver",
-    "miscs",
-    "sim",
-    "tests",
-    "LICENSE",
-    "Makefile",
-    "README.md",
-    "RELEASE",
-    "TODO",
-    ".codecov.yml",
-    ".gitmodules",
-    ".travis.yml"
-  ]
 }
