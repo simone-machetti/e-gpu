@@ -21,7 +21,7 @@ module host_mem #(
     state_t curr_state;
     state_t next_state;
 
-    logic [3:0]  be;
+    logic [ 3:0] be;
     logic [29:0] addr;
     logic [31:0] wdata;
 
@@ -48,11 +48,14 @@ module host_mem #(
     end
 
     always_comb begin
+
         next_state          = curr_state;
         host_mem_req.gnt    = 1'b0;
         host_mem_rsp.rvalid = 1'b0;
         host_mem_rsp.rdata  = 32'd0;
+
         case(curr_state)
+
             IDLE: begin
                 if (host_mem_req.req) begin
                     if (host_mem_req.we) begin
@@ -68,27 +71,36 @@ module host_mem #(
                     next_state = IDLE;
                 end
             end
+
             READ: begin
                 host_mem_rsp.rvalid = 1'b1;
                 host_mem_rsp.rdata  = mem_array[addr];
                 next_state          = IDLE;
             end
+
             WRITE: begin
-                host_mem_rsp.rvalid        = 1'b1;
-                if (be[0])
+                host_mem_rsp.rvalid = 1'b1;
+                if (be[0]) begin
                     mem_array[addr][7:0]   = wdata[7:0];
-                if (be[1])
+                end
+                if (be[1]) begin
                     mem_array[addr][15:8]  = wdata[15:8];
-                if (be[2])
+                end
+                if (be[2]) begin
                     mem_array[addr][23:16] = wdata[23:16];
-                if (be[3])
+                end
+                if (be[3]) begin
                     mem_array[addr][31:24] = wdata[31:24];
-                next_state                 = IDLE;
+                end
+                next_state = IDLE;
             end
+
             default: begin
                 next_state = IDLE;
             end
+
         endcase
+
     end
 
 endmodule

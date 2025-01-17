@@ -35,6 +35,30 @@ module compute_unit #(
         .NUM_REQS  (`DCACHE_NUM_REQS),
         .WORD_SIZE (`DCACHE_WORD_SIZE),
         .TAG_WIDTH (`DCACHE_CORE_TAG_WIDTH)
+    ) data_req();
+
+    VX_dcache_rsp_if #(
+        .NUM_REQS  (`DCACHE_NUM_REQS),
+        .WORD_SIZE (`DCACHE_WORD_SIZE),
+        .TAG_WIDTH (`DCACHE_CORE_TAG_WIDTH)
+    ) data_rsp();
+
+    VX_dcache_req_if #(
+        .NUM_REQS  (`DCACHE_NUM_REQS),
+        .WORD_SIZE (`DCACHE_WORD_SIZE),
+        .TAG_WIDTH (`DCACHE_CORE_TAG_WIDTH)
+    ) local_mem_req();
+
+    VX_dcache_rsp_if #(
+        .NUM_REQS  (`DCACHE_NUM_REQS),
+        .WORD_SIZE (`DCACHE_WORD_SIZE),
+        .TAG_WIDTH (`DCACHE_CORE_TAG_WIDTH)
+    ) local_mem_rsp();
+
+    VX_dcache_req_if #(
+        .NUM_REQS  (`DCACHE_NUM_REQS),
+        .WORD_SIZE (`DCACHE_WORD_SIZE),
+        .TAG_WIDTH (`DCACHE_CORE_TAG_WIDTH)
     ) l1_data_cache_req();
 
     VX_dcache_rsp_if #(
@@ -50,8 +74,8 @@ module compute_unit #(
         .rst_ni             (rst_ni),
         .l1_instr_cache_req (l1_instr_cache_req),
         .l1_instr_cache_rsp (l1_instr_cache_rsp),
-        .l1_data_cache_req  (l1_data_cache_req),
-        .l1_data_cache_rsp  (l1_data_cache_rsp),
+        .l1_data_cache_req  (data_req),
+        .l1_data_cache_rsp  (data_rsp),
         .sleep_req_o        (sleep_req_o)
     );
 
@@ -62,6 +86,28 @@ module compute_unit #(
         .pipeline_instr_rsp (l1_instr_cache_rsp),
         .l2_instr_cache_req (l2_instr_cache_req),
         .l2_instr_cache_rsp (l2_instr_cache_rsp)
+    );
+
+    one_to_two #(
+        .NUM_REQS      (`NUM_THREADS)
+    ) one_to_two_i (
+        .clk_i         (clk_i),
+        .rst_ni        (rst_ni),
+        .pipeline_req  (data_req),
+        .pipeline_rsp  (data_rsp),
+        .local_mem_req (local_mem_req),
+        .local_mem_rsp (local_mem_rsp),
+        .l1_cache_req  (l1_data_cache_req),
+        .l1_cache_rsp  (l1_data_cache_rsp)
+    );
+
+    local_mem #(
+        .NUM_REQS (`NUM_THREADS)
+    ) local_mem_i (
+        .clk_i    (clk_i),
+        .rst_ni   (rst_ni),
+        .data_req (local_mem_req),
+        .data_rsp (local_mem_rsp)
     );
 
     l1_data_cache l1_data_cache_i (

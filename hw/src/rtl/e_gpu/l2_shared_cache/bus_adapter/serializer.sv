@@ -28,38 +28,38 @@ module serializer #(
 
     typedef enum logic [1:0] {IDLE, SEND_OUT_REQ, WAIT_OUT_RSP, SEND_IN_RSP} state_t;
 
-    state_t curr_state;
-    state_t next_state;
+    state_t                            curr_state;
+    state_t                            next_state;
 
-    logic                      curr_in_req_rw;
-    logic [DATA_SIZE_BYTE-1:0] curr_in_req_byteen;
-    logic [ADDR_WIDTH_BIT-1:0] curr_in_req_addr;
-    logic [DATA_WIDTH_BIT-1:0] curr_in_req_data;
-    logic [TAG_WIDTH_BIT-1:0]  curr_in_req_tag;
+    logic                              curr_in_req_rw;
+    logic [        DATA_SIZE_BYTE-1:0] curr_in_req_byteen;
+    logic [        ADDR_WIDTH_BIT-1:0] curr_in_req_addr;
+    logic [        DATA_WIDTH_BIT-1:0] curr_in_req_data;
+    logic [         TAG_WIDTH_BIT-1:0] curr_in_req_tag;
 
-    logic                      next_in_req_rw;
-    logic [DATA_SIZE_BYTE-1:0] next_in_req_byteen;
-    logic [ADDR_WIDTH_BIT-1:0] next_in_req_addr;
-    logic [DATA_WIDTH_BIT-1:0] next_in_req_data;
-    logic [TAG_WIDTH_BIT-1:0]  next_in_req_tag;
+    logic                              next_in_req_rw;
+    logic [        DATA_SIZE_BYTE-1:0] next_in_req_byteen;
+    logic [        ADDR_WIDTH_BIT-1:0] next_in_req_addr;
+    logic [        DATA_WIDTH_BIT-1:0] next_in_req_data;
+    logic [         TAG_WIDTH_BIT-1:0] next_in_req_tag;
 
     logic [$clog2(NUM_DATA_WORDS)-1:0] curr_count;
     logic [$clog2(NUM_DATA_WORDS)-1:0] next_count;
 
-    logic [DATA_WIDTH_BIT-1:0] curr_out_rsp_data;
-    logic [TAG_WIDTH_BIT-1:0]  curr_out_rsp_tag;
+    logic [        DATA_WIDTH_BIT-1:0] curr_out_rsp_data;
+    logic [         TAG_WIDTH_BIT-1:0] curr_out_rsp_tag;
 
-    logic [DATA_WIDTH_BIT-1:0] next_out_rsp_data;
-    logic [TAG_WIDTH_BIT-1:0]  next_out_rsp_tag;
+    logic [        DATA_WIDTH_BIT-1:0] next_out_rsp_data;
+    logic [         TAG_WIDTH_BIT-1:0] next_out_rsp_tag;
 
-    logic store_in_req;
-    logic store_out_rsp;
-    logic count;
+    logic                              store_in_req;
+    logic                              store_out_rsp;
+    logic                              count;
 
-    logic in_mem_req_ready;
-    logic in_mem_rsp_valid;
-    logic out_mem_req_valid;
-    logic out_mem_rsp_ready;
+    logic                              in_mem_req_ready;
+    logic                              in_mem_rsp_valid;
+    logic                              out_mem_req_valid;
+    logic                              out_mem_rsp_ready;
 
     /*
     * Store input request
@@ -153,6 +153,7 @@ module serializer #(
     end
 
     always_comb begin
+
         next_state        = curr_state;
         store_in_req      = 1'b0;
         in_mem_req_ready  = 1'b0;
@@ -161,7 +162,9 @@ module serializer #(
         store_out_rsp     = 1'b0;
         out_mem_rsp_ready = 1'b0;
         in_mem_rsp_valid  = 1'b0;
+
         case (curr_state)
+
             IDLE: begin
                 if (in_mem_req.valid) begin
                     store_in_req     = 1'b1;
@@ -172,6 +175,7 @@ module serializer #(
                     next_state = IDLE;
                 end
             end
+
             SEND_OUT_REQ: begin
                 out_mem_req_valid = 1'b1;
                 if (out_mem_req.ready) begin
@@ -192,6 +196,7 @@ module serializer #(
                     next_state = SEND_OUT_REQ;
                 end
             end
+
             WAIT_OUT_RSP: begin
                 if (out_mem_rsp.valid) begin
                     store_out_rsp     = 1'b1;
@@ -208,6 +213,7 @@ module serializer #(
                     next_state = WAIT_OUT_RSP;
                 end
             end
+
             SEND_IN_RSP: begin
                 in_mem_rsp_valid = 1'b1;
                 if (in_mem_rsp.ready) begin
@@ -217,10 +223,13 @@ module serializer #(
                     next_state = SEND_IN_RSP;
                 end
             end
+
             default: begin
                 next_state = IDLE;
             end
+
         endcase
+
     end
 
 endmodule
