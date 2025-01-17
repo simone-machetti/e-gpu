@@ -30,16 +30,16 @@ module logic_cache
     */
     typedef enum logic [2:0] {GPU_IDLE, CU_START, L2_CLK_EN, L2_RST_N_DIS, L2_RST_N_EN} gpu_state_t;
 
-    gpu_state_t gpu_curr_state;
-    gpu_state_t gpu_next_state;
+    gpu_state_t               gpu_curr_state;
+    gpu_state_t               gpu_next_state;
 
-    logic cu_start;
-    logic cu_end;
+    logic                     cu_start;
+    logic                     cu_end;
 
     logic [$clog2(DELAY)-1:0] l2_curr_cnt;
     logic [$clog2(DELAY)-1:0] l2_next_cnt;
 
-    logic l2_cnt_en;
+    logic                     l2_cnt_en;
 
     always_ff @(posedge clk_i or negedge rst_ni) begin
         if (!rst_ni) begin
@@ -62,12 +62,15 @@ module logic_cache
     end
 
     always_comb begin
+
         gpu_next_state = gpu_curr_state;
         l2_clk_en_o    = 1'b0;
         l2_rst_n_o     = 1'b0;
         l2_cnt_en      = 1'b0;
         cu_start       = 1'b0;
+
         case(gpu_curr_state)
+
             GPU_IDLE: begin
                 if (gpu_start_i) begin
                     gpu_next_state = CU_START;
@@ -76,10 +79,12 @@ module logic_cache
                     gpu_next_state = GPU_IDLE;
                 end
             end
+
             CU_START: begin
                 cu_start       = 1'b1;
                 gpu_next_state = L2_CLK_EN;
             end
+
             L2_CLK_EN: begin
                 l2_clk_en_o = 1'b1;
                 l2_cnt_en   = 1'b1;
@@ -90,6 +95,7 @@ module logic_cache
                     gpu_next_state = L2_RST_N_DIS;
                 end
             end
+
             L2_RST_N_DIS: begin
                 l2_clk_en_o = 1'b1;
                 l2_rst_n_o  = 1'b1;
@@ -100,6 +106,7 @@ module logic_cache
                     gpu_next_state = L2_RST_N_DIS;
                 end
             end
+
             L2_RST_N_EN: begin
                 l2_clk_en_o = 1'b1;
                 l2_cnt_en   = 1'b1;
@@ -110,11 +117,13 @@ module logic_cache
                     gpu_next_state = GPU_IDLE;
                 end
             end
+
             default: begin
                 gpu_next_state = GPU_IDLE;
             end
 
         endcase
+
     end
 
     /*
@@ -122,16 +131,16 @@ module logic_cache
     */
     typedef enum logic [2:0] {CU_IDLE, CU_CLK_EN, CU_RST_N_DIS, CU_RST_N_EN} cu_state_t;
 
-    cu_state_t cu_curr_state[`NUM_COMPUTE_UNITS];
-    cu_state_t cu_next_state[`NUM_COMPUTE_UNITS];
+    cu_state_t                     cu_curr_state[`NUM_COMPUTE_UNITS];
+    cu_state_t                     cu_next_state[`NUM_COMPUTE_UNITS];
 
     logic [`NUM_COMPUTE_UNITS-1:0] cu_curr_sleep;
     logic [`NUM_COMPUTE_UNITS-1:0] cu_next_sleep;
 
-    logic [$clog2(DELAY)-1:0] cu_curr_cnt[`NUM_COMPUTE_UNITS];
-    logic [$clog2(DELAY)-1:0] cu_next_cnt[`NUM_COMPUTE_UNITS];
+    logic [     $clog2(DELAY)-1:0] cu_curr_cnt[`NUM_COMPUTE_UNITS];
+    logic [     $clog2(DELAY)-1:0] cu_next_cnt[`NUM_COMPUTE_UNITS];
 
-    logic cu_cnt_en[`NUM_COMPUTE_UNITS];
+    logic                          cu_cnt_en[`NUM_COMPUTE_UNITS];
 
     assign cu_end = (cu_curr_sleep == {`NUM_COMPUTE_UNITS{1'b1}}) ? 1'b1 : 1'b0;
 
@@ -171,11 +180,14 @@ module logic_cache
             end
 
             always_comb begin
+
                 cu_next_state[cu] = cu_curr_state[cu];
                 cu_clk_en_o[cu]   = 1'b0;
                 cu_rst_n_o[cu]    = 1'b0;
                 cu_cnt_en[cu]     = 1'b0;
+
                 case(cu_curr_state[cu])
+
                     CU_IDLE: begin
                         if (cu_start) begin
                             cu_next_state[cu] = CU_CLK_EN;
@@ -184,6 +196,7 @@ module logic_cache
                             cu_next_state[cu] = CU_IDLE;
                         end
                     end
+
                     CU_CLK_EN: begin
                         cu_clk_en_o[cu] = 1'b1;
                         cu_cnt_en[cu]   = 1'b1;
@@ -194,6 +207,7 @@ module logic_cache
                             cu_next_state[cu] = CU_RST_N_DIS;
                         end
                     end
+
                     CU_RST_N_DIS: begin
                         cu_clk_en_o[cu] = 1'b1;
                         cu_rst_n_o[cu]  = 1'b1;
@@ -204,6 +218,7 @@ module logic_cache
                             cu_next_state[cu] = CU_RST_N_DIS;
                         end
                     end
+
                     CU_RST_N_EN: begin
                         cu_clk_en_o[cu] = 1'b1;
                         cu_cnt_en[cu]   = 1'b1;
@@ -214,11 +229,15 @@ module logic_cache
                             cu_next_state[cu] = CU_IDLE;
                         end
                     end
+
                     default: begin
                         cu_next_state[cu] = CU_IDLE;
                     end
+
                 endcase
+
             end
+
         end
 
     endgenerate

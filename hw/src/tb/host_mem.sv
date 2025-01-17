@@ -14,12 +14,12 @@ module host_mem #(
     obi_rsp_if.master host_mem_rsp
 );
 
-    logic [31:0] mem_array [0:MEM_SIZE_WORD-1];
-
     typedef enum logic [1:0] {IDLE, READ, WRITE} state_t;
 
-    state_t curr_state;
-    state_t next_state;
+    logic [31:0] mem_array [0:MEM_SIZE_WORD-1];
+
+    state_t      curr_state;
+    state_t      next_state;
 
     logic [ 3:0] be;
     logic [29:0] addr;

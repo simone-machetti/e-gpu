@@ -27,13 +27,13 @@ module config_regs_cache
     *
     */
 
+    typedef enum logic [1:0] {IDLE, READ, WRITE} state_t;
+
     logic [31:0] curr_regs [0:3];
     logic [31:0] next_regs [0:3];
 
-    typedef enum logic [1:0] {IDLE, READ, WRITE} state_t;
-
-    state_t curr_state;
-    state_t next_state;
+    state_t      curr_state;
+    state_t      next_state;
 
     logic [3:0]  be;
     logic [1:0]  addr;
@@ -75,12 +75,15 @@ module config_regs_cache
     end
 
     always_comb begin
+
         next_state      = curr_state;
         regs_req.gnt    = 1'b0;
         regs_rsp.rvalid = 1'b0;
         regs_rsp.rdata  = 32'd0;
         next_regs       = curr_regs;
+
         case(curr_state)
+
             IDLE: begin
                 if (regs_req.req) begin
                     if (regs_req.we) begin
@@ -96,11 +99,13 @@ module config_regs_cache
                     next_state = IDLE;
                 end
             end
+
             READ: begin
                 regs_rsp.rvalid = 1'b1;
                 regs_rsp.rdata  = next_regs[addr];
                 next_state      = IDLE;
             end
+
             WRITE: begin
                 regs_rsp.rvalid            = 1'b1;
                 if (be[0])
@@ -113,10 +118,13 @@ module config_regs_cache
                     next_regs[addr][31:24] = wdata[31:24];
                 next_state                 = IDLE;
             end
+
             default: begin
                 next_state = IDLE;
             end
+
         endcase
+
     end
 
 endmodule

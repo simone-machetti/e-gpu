@@ -4,7 +4,6 @@
 #
 # Author: Simone Machetti - simone.machetti@epfl.ch
 
-MEM_HIER ?= CACHE
 APP_NAME ?= vec_add
 SIM_GUI  ?= 0
 
@@ -39,7 +38,6 @@ ifeq ($(SIM_GUI), 0)
 sim:
 	cd $(E_GPU_HOME)/sw/apps/$(APP_NAME) && \
 	mkdir -p $(E_GPU_HOME)/hw/imp/sim/output && \
-	export SEL_MEM_HIER=$(MEM_HIER) && \
 	export SEL_SIM_GUI=$(SIM_GUI) && \
 	vsim -c -do $(E_GPU_HOME)/hw/imp/sim/scripts/e_gpu.tcl && \
 	mv $(E_GPU_HOME)/sw/apps/$(APP_NAME)/output.vcd $(E_GPU_HOME)/hw/imp/sim/output
@@ -49,7 +47,6 @@ else
 sim:
 	cd $(E_GPU_HOME)/sw/apps/$(APP_NAME) && \
 	mkdir -p $(E_GPU_HOME)/hw/imp/sim/output && \
-	export SEL_MEM_HIER=$(MEM_HIER) && \
 	export SEL_SIM_GUI=$(SIM_GUI) && \
 	vsim -gui -do $(E_GPU_HOME)/hw/imp/sim/scripts/e_gpu.tcl && \
 	mv $(E_GPU_HOME)/sw/apps/$(APP_NAME)/output.vcd $(E_GPU_HOME)/hw/imp/sim/output
