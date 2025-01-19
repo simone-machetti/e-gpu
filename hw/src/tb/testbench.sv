@@ -154,7 +154,7 @@ module testbench;
         clk = 1'b1;
         #(clk_period/2);
 
-        if(testbench.e_gpu_i.controller_cache_i.logic_cache_i.cu_end == 1'b1) begin
+        if(testbench.e_gpu_i.controller_i.ctrl_logic_i.cu_end == 1'b1) begin
             stop_vcd;
             dump_mem;
             check_results;

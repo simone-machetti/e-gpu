@@ -6,7 +6,7 @@
 
 `include "e_gpu.vh"
 
-module controller_cache
+module controller
 (
     input logic clk_i,
     input logic rst_ni,
@@ -26,7 +26,7 @@ module controller_cache
 
     logic gpu_start;
 
-    logic_cache logic_cache_i (
+    ctrl_logic ctrl_logic_i (
         .clk_i            (clk_i),
         .rst_ni           (rst_ni),
         .gpu_start_i      (gpu_start),
@@ -38,7 +38,7 @@ module controller_cache
         .l2_rst_n_o       (l2_rst_n_o)
     );
 
-    config_regs_cache config_regs_cache_i (
+    config_regs config_regs_i (
         .clk_i       (clk_i),
         .rst_ni      (rst_ni),
         .regs_req    (regs_req),

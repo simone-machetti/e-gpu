@@ -135,7 +135,7 @@ module e_gpu
         .clk_o (l2_clk)
     );
 
-    controller_cache controller_cache_i (
+    controller controller_i (
         .clk_i            (clk_i),
         .rst_ni           (rst_ni),
         .regs_req         (conf_regs_req),

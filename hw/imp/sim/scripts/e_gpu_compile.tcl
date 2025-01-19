@@ -166,9 +166,9 @@ vlog -work work $lib_input $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfa
 vlog -work work $lib_input $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/e_gpu/compute_unit/local_mem.sv
 vlog -work work $lib_input $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/e_gpu/compute_unit/one_to_two.sv
 
-# /hw/src/rtl/e_gpu/controller_cache
-vlog -work work $lib_input $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/e_gpu/controller_cache/config_regs_cache.sv
-vlog -work work $lib_input $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/e_gpu/controller_cache/logic_cache.sv
+# /hw/src/rtl/e_gpu/controller
+vlog -work work $lib_input $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/e_gpu/controller/config_regs.sv
+vlog -work work $lib_input $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/e_gpu/controller/ctrl_logic.sv
 
 # /hw/src/rtl/e_gpu/l2_shared_cache/bus_adapter
 vlog -work work $lib_input $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/e_gpu/l2_shared_cache/bus_adapter/serializer.sv
@@ -180,7 +180,7 @@ vlog -work work $lib_input $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfa
 
 # /hw/src/rtl/e_gpu
 vlog -work work $lib_input $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/e_gpu/compute_unit.sv
-vlog -work work $lib_input $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/e_gpu/controller_cache.sv
+vlog -work work $lib_input $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/e_gpu/controller.sv
 vlog -work work $lib_input $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/e_gpu/l2_shared_cache.sv
 
 # /hw/src/rtl/

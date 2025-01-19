@@ -6,7 +6,7 @@
 
 `include "e_gpu.vh"
 
-module logic_cache
+module ctrl_logic
 (
     input logic clk_i,
     input logic rst_ni,
