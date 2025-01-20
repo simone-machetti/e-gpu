@@ -21,21 +21,25 @@ module controller
     output logic cu_rst_n_o[`NUM_COMPUTE_UNITS],
 
     output logic l2_clk_en_o,
-    output logic l2_rst_n_o
+    output logic l2_rst_n_o,
+
+    output logic interrupt_o
 );
 
-    logic gpu_start;
+    logic start;
+    logic int_event;
 
     ctrl_logic ctrl_logic_i (
         .clk_i            (clk_i),
         .rst_ni           (rst_ni),
-        .gpu_start_i      (gpu_start),
+        .start_i          (start),
         .cu_sleep_req_i   (cu_sleep_req_i),
         .cu_delay_sleep_i (cu_delay_sleep_i),
         .cu_clk_en_o      (cu_clk_en_o),
         .cu_rst_n_o       (cu_rst_n_o),
         .l2_clk_en_o      (l2_clk_en_o),
-        .l2_rst_n_o       (l2_rst_n_o)
+        .l2_rst_n_o       (l2_rst_n_o),
+        .int_event_o      (int_event)
     );
 
     config_regs config_regs_i (
@@ -43,7 +47,9 @@ module controller
         .rst_ni      (rst_ni),
         .regs_req    (regs_req),
         .regs_rsp    (regs_rsp),
-        .gpu_start_o (gpu_start)
+        .int_event_i (int_event),
+        .start_o     (start),
+        .interrupt_o (interrupt_o)
     );
 
 endmodule

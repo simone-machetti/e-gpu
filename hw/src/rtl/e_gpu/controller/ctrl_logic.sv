@@ -11,7 +11,7 @@ module ctrl_logic
     input logic clk_i,
     input logic rst_ni,
 
-    input logic gpu_start_i,
+    input logic start_i,
 
     input logic cu_sleep_req_i[`NUM_COMPUTE_UNITS],
     input logic cu_delay_sleep_i[`NUM_COMPUTE_UNITS],
@@ -20,7 +20,9 @@ module ctrl_logic
     output logic cu_rst_n_o[`NUM_COMPUTE_UNITS],
 
     output logic l2_clk_en_o,
-    output logic l2_rst_n_o
+    output logic l2_rst_n_o,
+
+    output logic int_event_o
 );
 
     parameter DELAY = 4;
@@ -72,7 +74,7 @@ module ctrl_logic
         case(gpu_curr_state)
 
             GPU_IDLE: begin
-                if (gpu_start_i) begin
+                if (start_i) begin
                     gpu_next_state = CU_START;
                 end
                 else begin
@@ -142,7 +144,8 @@ module ctrl_logic
 
     logic                          cu_cnt_en[`NUM_COMPUTE_UNITS];
 
-    assign cu_end = (cu_curr_sleep == {`NUM_COMPUTE_UNITS{1'b1}}) ? 1'b1 : 1'b0;
+    assign cu_end      = (&cu_curr_sleep) ? 1'b1 : 1'b0;
+    assign int_event_o = cu_end;
 
     generate
 

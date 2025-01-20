@@ -24,6 +24,8 @@ module testbench;
     logic clk;
     logic rst_n;
 
+    logic interrupt;
+
     obi_req_if host_mem_req();
     obi_rsp_if host_mem_rsp();
 
@@ -38,7 +40,8 @@ module testbench;
         .conf_regs_req (conf_regs_req),
         .conf_regs_rsp (conf_regs_rsp),
         .host_mem_req  (host_mem_req),
-        .host_mem_rsp  (host_mem_rsp)
+        .host_mem_rsp  (host_mem_rsp),
+        .interrupt_o   (interrupt)
     );
 
     host_mem #(
@@ -153,13 +156,18 @@ module testbench;
         #(clk_period/2);
         clk = 1'b1;
         #(clk_period/2);
+    end
 
-        if(testbench.e_gpu_i.controller_i.ctrl_logic_i.cu_end == 1'b1) begin
+    always begin
+        if(testbench.interrupt == 1'b1) begin
+            write_conf_regs(32'd8, 32'd1);
+            #(clk_period*50);
             stop_vcd;
             dump_mem;
             check_results;
             $stop;
         end
+        @(posedge clk);
     end
 
 endmodule

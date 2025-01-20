@@ -15,7 +15,9 @@ module e_gpu
     obi_rsp_if.master conf_regs_rsp,
 
     obi_req_if.master host_mem_req,
-    obi_rsp_if.slave  host_mem_rsp
+    obi_rsp_if.slave  host_mem_rsp,
+
+    output logic interrupt_o
 );
 
     logic clk_core;
@@ -145,7 +147,8 @@ module e_gpu
         .cu_clk_en_o      (cu_clk_en),
         .cu_rst_n_o       (cu_rst_n),
         .l2_clk_en_o      (l2_clk_en),
-        .l2_rst_n_o       (l2_rst_n)
+        .l2_rst_n_o       (l2_rst_n),
+        .interrupt_o      (interrupt_o)
     );
 
 endmodule
