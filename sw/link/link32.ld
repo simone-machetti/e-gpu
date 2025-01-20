@@ -12,8 +12,9 @@ MEMORY
 {
   KERNEL_CODE  (RWX) : ORIGIN = 0x00000000 , LENGTH = 0x08000
   KERNEL_STACK (RWX) : ORIGIN = 0x00008000 , LENGTH = 0x08000
-  KERNEL_ARGS  (RWX) : ORIGIN = 0X00010000 , LENGTH = 0x08000
+  KERNEL_ARGS  (RWX) : ORIGIN = 0x00010000 , LENGTH = 0x08000
   KERNEL_DATA  (RWX) : ORIGIN = 0x00018000 , LENGTH = 0x08000
+  KERNEL_LOCAL (RWX) : ORIGIN = 0x00020000 , LENGTH = 0x10000
 }
 
 __stack_size = 0x8000;
@@ -74,6 +75,12 @@ SECTIONS
     *(.kernel_data)
     . = ALIGN(64);
   } > KERNEL_DATA
+
+  .kernel_local : {
+    . = ALIGN(64);
+    *(.kernel_local)
+    . = ALIGN(64);
+  } > KERNEL_LOCAL
 
   /DISCARD/ : {
     *(*)
