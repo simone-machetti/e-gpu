@@ -7,14 +7,15 @@
 `ifndef HOST
 `define HOST
 
-`define NUM_TASKS 64
+`define LOCAL_WORK_SIZE  64
+`define NUM_WORK_GROUPS  4
 
-`define ARRAY_SIZE (`NUM_TASKS * 4)
-
-`define ARRAY_A_OFFSET 0
-`define ARRAY_B_OFFSET `ARRAY_SIZE
-`define ARRAY_C_OFFSET (`ARRAY_SIZE * 2)
-`define EXPECTED_RESULT 15
+`define GLOBAL_WORK_SIZE (`LOCAL_WORK_SIZE * `NUM_WORK_GROUPS)
+`define ARRAY_SIZE       (`GLOBAL_WORK_SIZE * 4)
+`define ARRAY_A_OFFSET   0
+`define ARRAY_B_OFFSET   `ARRAY_SIZE
+`define ARRAY_C_OFFSET   (`ARRAY_SIZE * 2)
+`define EXPECTED_RESULT  15
 
 task write_data;
 begin
@@ -25,10 +26,11 @@ begin
         write_kernel_data(`ARRAY_C_OFFSET + i, 0);
     end
 
-    write_kernel_args(32'h0, `NUM_TASKS);
-    write_kernel_args(32'h4, `HOST_MEM_KERNEL_DATA + `ARRAY_A_OFFSET);
-    write_kernel_args(32'h8, `HOST_MEM_KERNEL_DATA + `ARRAY_B_OFFSET);
-    write_kernel_args(32'hC, `HOST_MEM_KERNEL_DATA + `ARRAY_C_OFFSET);
+    write_kernel_args(32'h0,  `GLOBAL_WORK_SIZE);
+    write_kernel_args(32'h4,  `LOCAL_WORK_SIZE);
+    write_kernel_args(32'h8,  `HOST_MEM_KERNEL_DATA + `ARRAY_A_OFFSET);
+    write_kernel_args(32'hC,  `HOST_MEM_KERNEL_DATA + `ARRAY_B_OFFSET);
+    write_kernel_args(32'h10, `HOST_MEM_KERNEL_DATA + `ARRAY_C_OFFSET);
 end
 endtask
 
