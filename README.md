@@ -32,5 +32,5 @@ make SIM_GUI=0 APP_NAME=<app_name> sim
 
 Our sample applications are:
 
-- **vec_add**: computes the element-wise addition of two vectors.
-- **vec_mul**: computes the element-wise multiplication of two vectors.
+- **vec_add**: Computes the element-wise addition of two vectors.
+- **vec_mul**: Computes the element-wise multiplication of two vectors.
