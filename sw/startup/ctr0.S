@@ -8,7 +8,7 @@
 
 .section .start, "ax"
 .global _start
-.set _STACK_SIZE, 0x8000
+.set _STACK_SIZE, 0x10000
 
 _start:
 

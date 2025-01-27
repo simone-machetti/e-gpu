@@ -14,15 +14,13 @@ package mem_map_pkg;
         logic [31:0] end_addr;
     } mem_map_t;
 
-    localparam logic [31:0] RAM_BANK_SIZE = 32'h8000;
-
     localparam logic [31:0] GLOBAL_MEM_IDX           = 32'd0;
     localparam logic [31:0] GLOBAL_MEM_START_ADDRESS = 32'h00000000;
-    localparam logic [31:0] GLOBAL_MEM_END_ADDRESS   = 32'h00020000;
+    localparam logic [31:0] GLOBAL_MEM_END_ADDRESS   = 32'h00040000;
 
     localparam logic [31:0] LOCAL_MEM_IDX           = 32'd1;
-    localparam logic [31:0] LOCAL_MEM_START_ADDRESS = 32'h00020000;
-    localparam logic [31:0] LOCAL_MEM_END_ADDRESS   = 32'h00030000;
+    localparam logic [31:0] LOCAL_MEM_START_ADDRESS = 32'h00040000;
+    localparam logic [31:0] LOCAL_MEM_END_ADDRESS   = 32'h00050000;
 
     localparam logic [31:0] OFFSET_LOCAL_MEM_BANK_0_IDX           = 32'd0;
     localparam logic [31:0] OFFSET_LOCAL_MEM_BANK_0_START_ADDRESS = 32'h00000000;

@@ -11,9 +11,9 @@
 `define IN_FILE  "$E_GPU_HOME/hw/imp/sim/input/kernel.mem"
 `define OUT_FILE "$E_GPU_HOME/hw/imp/sim/output/output.mem"
 
-`define HOST_MEM_SIZE        32'h00030000
-`define HOST_MEM_KERNEL_ARGS 32'h00010000
-`define HOST_MEM_KERNEL_DATA 32'h00018000
+`define HOST_MEM_SIZE        32'h00050000
+`define HOST_MEM_KERNEL_ARGS 32'h00020000
+`define HOST_MEM_KERNEL_DATA 32'h00030000
 
 `define HOST_MEM_SIZE_WORD        (`HOST_MEM_SIZE / 4)
 `define HOST_MEM_KERNEL_ARGS_WORD (`HOST_MEM_KERNEL_ARGS / 4)
