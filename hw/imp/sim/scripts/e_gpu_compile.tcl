@@ -125,7 +125,7 @@ vlog -work work $lib_input $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfa
 vlog -work work $lib_input $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/vendor/vortex/hw/rtl/VX_pipeline.sv
 
 # /hw/src/rtl/common
-vlog -work work $lib_input $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/common/mem/arm_sram/rf256x32m2/vlog/rf256x32m2.v
+# vlog -work work $lib_input $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/common/mem/arm_sram/rf256x32m2/vlog/rf256x32m2.v
 vlog -work work $lib_input $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/common/clock_gating_cell/clock_gating_cell_behavioral.sv
 vlog -work work $lib_input $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/common/clock_gating_cell/clock_gating_cell_wrapper.sv
 vlog -work work $lib_input $lib_include $lib_vx_rtl $lib_vx_libs $lib_vx_interfaces $lib_vx_fp_cores $lib_vx_cache $env(E_GPU_HOME)/hw/src/rtl/common/mem/single_port_mem_behavioral.sv
