@@ -12,6 +12,11 @@
 
   upstream: {
     url: "git@github.com:simone-machetti/vortex.git",
-    rev: "fee0df167e93534dc61456358cee37c3448c077c",
+    rev: "31012388fe708d449ce4988c89b1436ce455ade7",
   },
+
+exclude_from_upstream: [
+    "third_party",
+    ".gitmodules"
+  ]
 }
