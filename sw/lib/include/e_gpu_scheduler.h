@@ -11,13 +11,14 @@
 #define MAX_NUM_ARGS_KERNEL 64
 
 typedef struct {
-  volatile unsigned int num_tasks;
+  volatile unsigned int global_work_size;
+  volatile unsigned int local_work_size;
   volatile unsigned int *args[MAX_NUM_ARGS_KERNEL];
 } kernel_args_t;
 
 extern kernel_args_t kernel_args;
 
-void __attribute__ ((noinline)) schedule_kernel(kernel_args_t *kernel_args);
-void __attribute__ ((noinline)) kernel(unsigned int task_id);
+__attribute__ ((noinline)) void schedule_kernel(kernel_args_t *kernel_args);
+__attribute__ ((noinline)) void kernel(unsigned int task_id);
 
 #endif

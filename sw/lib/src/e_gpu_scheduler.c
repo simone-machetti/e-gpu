@@ -10,119 +10,163 @@
 
 typedef struct {
   volatile unsigned int global_id[NUM_COMPUTE_UNITS];
+  volatile unsigned int local_id[NUM_COMPUTE_UNITS];
   volatile unsigned int active_warps[NUM_COMPUTE_UNITS];
   volatile unsigned int active_threads[NUM_COMPUTE_UNITS];
   volatile kernel_args_t *kernel_args;
 } tasks_args_t;
 
-void __attribute__ ((noinline)) spawn_warps(void);
-void __attribute__ ((noinline)) spawn_threads(void);
-void __attribute__ ((noinline)) spawn_tasks(void);
+__attribute__ ((noinline)) void spawn_warps(void);
+__attribute__ ((noinline)) void spawn_threads(void);
+__attribute__ ((noinline)) void spawn_tasks(void);
 
-tasks_args_t tasks_args;
+volatile tasks_args_t tasks_args;
 
 __attribute__((section(".kernel_args"))) kernel_args_t kernel_args;
 
-void __attribute__ ((noinline)) schedule_kernel(kernel_args_t *kernel_args)
+__attribute__ ((noinline)) void schedule_kernel(kernel_args_t *kernel_args)
 {
   tasks_args.kernel_args = kernel_args;
   spawn_warps();
 }
 
-void __attribute__ ((noinline)) spawn_warps()
+__attribute__ ((noinline)) void spawn_warps()
 {
-  unsigned int num_tasks                = (unsigned int) tasks_args.kernel_args->num_tasks;
+  unsigned int global_work_size                 = (unsigned int)tasks_args.kernel_args->global_work_size;
+  unsigned int local_work_size                  = (unsigned int)tasks_args.kernel_args->local_work_size;
 
-  unsigned int compute_unit_id          = vx_core_id();
-  unsigned int num_compute_units        = vx_num_cores();
-  unsigned int warps_per_compute_unit   = vx_num_warps();
-  unsigned int threads_per_warp         = vx_num_threads();
+  unsigned int num_compute_units                = vx_num_cores();
+  unsigned int compute_unit_id                  = vx_core_id();
+  unsigned int num_threads_per_warp             = vx_num_threads();
+  unsigned int num_warps_per_compute_unit       = vx_num_warps();
 
-  unsigned int threads_per_compute_unit = warps_per_compute_unit * threads_per_warp;
-  unsigned int threads_per_gpu          = threads_per_compute_unit * num_compute_units;
+  unsigned int threads_per_compute_unit         = num_threads_per_warp * num_warps_per_compute_unit;
+  unsigned int num_work_groups                  = global_work_size / local_work_size;
+  unsigned int num_work_groups_per_compute_unit = num_work_groups / num_compute_units;
+  unsigned int num_iterations_per_work_group    = local_work_size / threads_per_compute_unit;
 
-  unsigned int needed_threads           = num_tasks;
-  unsigned int needed_warps             = needed_threads / threads_per_warp;
-  unsigned int needed_compute_units     = needed_threads / threads_per_compute_unit;
-  unsigned int needed_gpu_iterations    = needed_threads / threads_per_gpu;
+  unsigned int remaining_threads;
+  unsigned int remaining_warps;
+  unsigned int remaining_work_groups;
 
-  tasks_args.global_id[compute_unit_id] = 0;
+  tasks_args.global_id[compute_unit_id] = compute_unit_id * local_work_size;
 
-  if (needed_gpu_iterations > 0)
+  remaining_work_groups = num_work_groups;
+
+  if (num_work_groups_per_compute_unit > 0)
   {
-    tasks_args.active_threads[compute_unit_id] = threads_per_warp;
-    tasks_args.active_warps[compute_unit_id]   = warps_per_compute_unit;
-
-    for (int i = 0; i < needed_gpu_iterations; i++)
+    for (int i = 0; i < num_work_groups_per_compute_unit; i++)
     {
-      vx_wspawn(warps_per_compute_unit, spawn_threads);
-      spawn_threads();
-      tasks_args.global_id[compute_unit_id] = tasks_args.global_id[compute_unit_id] + threads_per_gpu;
+      remaining_threads = local_work_size;
+      remaining_warps   = remaining_threads / num_threads_per_warp;
+
+      if (num_iterations_per_work_group > 0)
+      {
+        tasks_args.active_threads[compute_unit_id] = num_threads_per_warp;
+        tasks_args.active_warps[compute_unit_id]   = num_warps_per_compute_unit;
+
+        for (int i = 0; i < num_iterations_per_work_group; i++)
+        {
+          vx_wspawn(num_warps_per_compute_unit, spawn_threads);
+          spawn_threads();
+          tasks_args.global_id[compute_unit_id] = tasks_args.global_id[compute_unit_id] + threads_per_compute_unit;
+        }
+
+        remaining_threads = remaining_threads - (threads_per_compute_unit * num_iterations_per_work_group);
+        remaining_warps   = remaining_threads / num_threads_per_warp;
+      }
+
+      if (remaining_warps > 0)
+      {
+        tasks_args.active_threads[compute_unit_id] = num_threads_per_warp;
+        tasks_args.active_warps[compute_unit_id]   = remaining_warps;
+
+        vx_wspawn(remaining_warps, spawn_threads);
+        spawn_threads();
+        tasks_args.global_id[compute_unit_id] = tasks_args.global_id[compute_unit_id] + (remaining_warps * num_threads_per_warp);
+
+        remaining_threads = remaining_threads - (remaining_warps * num_threads_per_warp);
+      }
+
+      if (remaining_threads > 0)
+      {
+        tasks_args.active_threads[compute_unit_id] = remaining_threads;
+        tasks_args.active_warps[compute_unit_id]   = 1;
+        spawn_threads();
+        tasks_args.global_id[compute_unit_id] = tasks_args.global_id[compute_unit_id] + remaining_threads;
+      }
+
+      tasks_args.global_id[compute_unit_id] = tasks_args.global_id[compute_unit_id] + (local_work_size * (num_compute_units - 1));
     }
 
-    needed_threads       = needed_threads - (needed_gpu_iterations * threads_per_gpu);
-    needed_warps         = needed_threads / threads_per_warp;
-    needed_compute_units = needed_threads / threads_per_compute_unit;
+    remaining_work_groups = remaining_work_groups - (num_work_groups_per_compute_unit * num_compute_units);
   }
 
-  if (compute_unit_id < needed_compute_units)
+  if (remaining_work_groups > 0)
   {
-    tasks_args.active_threads[compute_unit_id] = threads_per_warp;
-    tasks_args.active_warps[compute_unit_id]   = warps_per_compute_unit;
-
-    vx_wspawn(warps_per_compute_unit, spawn_threads);
-    spawn_threads();
-    tasks_args.global_id[compute_unit_id] = tasks_args.global_id[compute_unit_id] + (needed_compute_units * threads_per_compute_unit);
-
-    needed_threads = needed_threads - (needed_compute_units * threads_per_compute_unit);
-    needed_warps   = needed_threads / threads_per_warp;
-  }
-
-  if (compute_unit_id == 0)
-  {
-    if (needed_warps > 0)
+    if (compute_unit_id < remaining_work_groups)
     {
-      tasks_args.active_threads[0] = threads_per_warp;
-      tasks_args.active_warps[0]   = needed_warps;
+      remaining_threads = local_work_size;
+      remaining_warps   = remaining_threads / num_threads_per_warp;
 
-      vx_wspawn(needed_warps, spawn_threads);
-      spawn_threads();
-      tasks_args.global_id[0] = tasks_args.global_id[0] + (needed_warps * threads_per_warp);
+      if (num_iterations_per_work_group > 0)
+      {
+        tasks_args.active_threads[compute_unit_id] = num_threads_per_warp;
+        tasks_args.active_warps[compute_unit_id]   = num_warps_per_compute_unit;
 
-      needed_threads = needed_threads - (needed_warps * threads_per_warp);
-    }
+        for (int i = 0; i < num_iterations_per_work_group; i++)
+        {
+          vx_wspawn(num_warps_per_compute_unit, spawn_threads);
+          spawn_threads();
+          tasks_args.global_id[compute_unit_id] = tasks_args.global_id[compute_unit_id] + threads_per_compute_unit;
+        }
 
-    if (needed_threads > 0)
-    {
-      tasks_args.active_threads[0] = needed_threads;
-      tasks_args.active_warps[0]   = 1;
-      spawn_threads();
+        remaining_threads = remaining_threads - (threads_per_compute_unit * num_iterations_per_work_group);
+        remaining_warps   = remaining_threads / num_threads_per_warp;
+      }
+
+      if (remaining_warps > 0)
+      {
+        tasks_args.active_threads[compute_unit_id] = num_threads_per_warp;
+        tasks_args.active_warps[compute_unit_id]   = remaining_warps;
+
+        vx_wspawn(remaining_warps, spawn_threads);
+        spawn_threads();
+        tasks_args.global_id[compute_unit_id] = tasks_args.global_id[compute_unit_id] + (remaining_warps * num_threads_per_warp);
+
+        remaining_threads = remaining_threads - (remaining_warps * num_threads_per_warp);
+      }
+
+      if (remaining_threads > 0)
+      {
+        tasks_args.active_threads[compute_unit_id] = remaining_threads;
+        tasks_args.active_warps[compute_unit_id]   = 1;
+        spawn_threads();
+        tasks_args.global_id[compute_unit_id] = tasks_args.global_id[compute_unit_id] + remaining_threads;
+      }
     }
   }
 }
 
-void __attribute__ ((noinline)) spawn_threads()
+__attribute__ ((noinline)) void spawn_threads()
 {
   unsigned int compute_unit_id = vx_core_id();
   unsigned int warp_id         = vx_warp_id();
 
-  vx_tmc((1 << tasks_args.active_threads[compute_unit_id]) - 1);
+  vx_tmc((0xFFFFFFFF >> (32 - tasks_args.active_threads[compute_unit_id])));
   spawn_tasks();
 
   vx_tmc(0 == warp_id);
 }
 
-void __attribute__ ((noinline)) spawn_tasks()
+__attribute__ ((noinline)) void spawn_tasks()
 {
-  unsigned int thread_id              = vx_thread_id();
-  unsigned int warp_id                = vx_warp_id();
-  unsigned int compute_unit_id        = vx_core_id();
-  unsigned int threads_per_warp       = vx_num_threads();
-  unsigned int warps_per_compute_unit = vx_num_warps();
+  unsigned int thread_id            = vx_thread_id();
+  unsigned int warp_id              = vx_warp_id();
+  unsigned int compute_unit_id      = vx_core_id();
+  unsigned int num_threads_per_warp = vx_num_threads();
 
-  unsigned int threads_per_compute_unit = warps_per_compute_unit * threads_per_warp;
-
-  unsigned int task_id = tasks_args.global_id[compute_unit_id] + (compute_unit_id * threads_per_compute_unit) + (warp_id * threads_per_warp) + thread_id;
+  unsigned int task_id = tasks_args.global_id[compute_unit_id] + (warp_id * num_threads_per_warp) + thread_id;
 
   kernel(task_id);
 
