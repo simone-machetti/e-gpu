@@ -4,6 +4,8 @@
 #
 # Author: Simone Machetti - simone.machetti@epfl.ch
 
+hw/src/vendor/vortex/hw/rtl/cache/@_*
+hw/src/vendor/vortex/hw/rtl/cache/_*
 hw/src/rtl/common/mem/arm_sram/build
 hw/src/rtl/common/mem/arm_sram/rf256x32m2
 hw/imp/sim/input/
